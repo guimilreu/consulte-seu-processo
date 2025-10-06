@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 3, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"","debugId":null}},
+    {"offset": {"line": 19, "column": 0}, "map": {"version":3,"sources":["file:///Users/guimilreu/Documents/consulte-seu-processo/client/app/dashboard/page.jsx"],"sourcesContent":["import React from \"react\";\n\nconst Dashboard = () => {\n\treturn <div className=\"flex flex-col gap-4\">\n\t\t<div className=\"flex flex-col border-b pb-4\">\n\t\t\t<h1 className=\"text-2xl font-bold\">Meus Processos</h1>\n\t\t\t<p className=\"text-sm text-muted-foreground\">\n\t\t\t\tAqui você pode consultar seus processos \n\t\t\t</p>\n\t\t</div>\n\n\t</div>;\n};\n\nexport default Dashboard;\n"],"names":[],"mappings":";;;;;AAAA;;;AAEA,MAAM,YAAY;IACjB,qBAAO,8OAAC;QAAI,WAAU;kBACrB,cAAA,8OAAC;YAAI,WAAU;;8BACd,8OAAC;oBAAG,WAAU;8BAAqB;;;;;;8BACnC,8OAAC;oBAAE,WAAU;8BAAgC;;;;;;;;;;;;;;;;;AAMhD;uCAEe","debugId":null}}]
+}

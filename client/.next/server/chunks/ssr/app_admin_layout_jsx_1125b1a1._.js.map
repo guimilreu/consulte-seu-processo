@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///Users/guimilreu/Documents/consulte-seu-processo/client/app/admin/layout.jsx"],"sourcesContent":["import React from \"react\";\n\nconst AdminLayout = ({ children }) => {\n\treturn <>{children}</>;\n};\n\nexport default AdminLayout;\n\n"],"names":[],"mappings":";;;;;AAAA;;;AAEA,MAAM,cAAc,CAAC,EAAE,QAAQ,EAAE;IAChC,qBAAO;kBAAG;;AACX;uCAEe","debugId":null}}]
+}

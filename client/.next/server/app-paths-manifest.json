@@ -1,0 +1,11 @@
+{
+  "/admin/dashboard/busca/page": "app/admin/dashboard/busca/page.js",
+  "/admin/dashboard/clientes/page": "app/admin/dashboard/clientes/page.js",
+  "/admin/dashboard/page": "app/admin/dashboard/page.js",
+  "/admin/dashboard/processos/page": "app/admin/dashboard/processos/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/dashboard/processo/[id]/page": "app/dashboard/processo/[id]/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/login/page": "app/login/page.js",
+  "/page": "app/page.js"
+}
