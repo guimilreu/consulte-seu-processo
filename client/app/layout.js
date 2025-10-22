@@ -1,5 +1,6 @@
 import { Lato } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "sonner";
 
 const lato = Lato({
 	subsets: ["latin"],
@@ -15,7 +16,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
 	return (
 		<html lang="en">
-			<body className={`${lato.className} antialiased`}>{children}</body>
+			<body className={`${lato.className} antialiased`}>
+				{children}
+				<Toaster richColors position="top-right" />
+			</body>
 		</html>
 	);
 }

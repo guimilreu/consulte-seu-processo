@@ -6,7 +6,22 @@ import { useAuthStore } from "@/store/auth-store";
 import { useProcessStore } from "@/store/process-store";
 import { useClientStore } from "@/store/client-store";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Users, FileText, CheckCircle, Clock } from "lucide-react";
+import { Users, FileText, CheckCircle, Clock, TrendingUp, AlertTriangle } from "lucide-react";
+import {
+	BarChart,
+	Bar,
+	LineChart,
+	Line,
+	PieChart,
+	Pie,
+	Cell,
+	XAxis,
+	YAxis,
+	CartesianGrid,
+	Tooltip,
+	Legend,
+	ResponsiveContainer,
+} from "recharts";
 
 const AdminDashboard = () => {
 	const router = useRouter();
@@ -27,6 +42,36 @@ const AdminDashboard = () => {
 	const processStats = getStats();
 	const clientStats = getClientStats();
 
+	// Dados para gráficos
+	const statusData = [
+		{ status: "Em andamento", count: processes.filter(p => p.status === "Em andamento").length, fill: "#3b82f6" },
+		{ status: "Aguardando doc", count: processes.filter(p => p.status === "Aguardando documentação").length, fill: "#eab308" },
+		{ status: "Em recurso", count: processes.filter(p => p.status === "Em fase de recurso").length, fill: "#a855f7" },
+		{ status: "Concluído", count: processes.filter(p => p.status === "Concluído").length, fill: "#22c55e" },
+	];
+
+	const monthlyData = [
+		{ month: "Mai", processos: 1 },
+		{ month: "Jun", processos: 1 },
+		{ month: "Jul", processos: 0 },
+		{ month: "Ago", processos: 2 },
+		{ month: "Set", processos: 0 },
+		{ month: "Out", processos: 1 },
+	];
+
+	const typeData = processes.reduce((acc, process) => {
+		const type = process.tags?.[0] || "Outros";
+		const existing = acc.find(item => item.name === type);
+		if (existing) {
+			existing.value += 1;
+		} else {
+			acc.push({ name: type, value: 1 });
+		}
+		return acc;
+	}, []).slice(0, 5);
+
+	const COLORS = ['#3b82f6', '#22c55e', '#eab308', '#a855f7', '#f97316'];
+
 	const statsCards = [
 		{
 			title: "Total de Clientes",
@@ -34,6 +79,8 @@ const AdminDashboard = () => {
 			icon: Users,
 			color: "text-blue-600",
 			bgColor: "bg-blue-100 dark:bg-blue-900",
+			trend: "+2 este mês",
+			trendUp: true,
 		},
 		{
 			title: "Total de Processos",
@@ -41,6 +88,8 @@ const AdminDashboard = () => {
 			icon: FileText,
 			color: "text-purple-600",
 			bgColor: "bg-purple-100 dark:bg-purple-900",
+			trend: "+1 este mês",
+			trendUp: true,
 		},
 		{
 			title: "Processos Ativos",
@@ -48,6 +97,8 @@ const AdminDashboard = () => {
 			icon: Clock,
 			color: "text-yellow-600",
 			bgColor: "bg-yellow-100 dark:bg-yellow-900",
+			trend: `${processStats.activeProcesses} em andamento`,
+			trendUp: null,
 		},
 		{
 			title: "Processos Concluídos",
@@ -55,10 +106,26 @@ const AdminDashboard = () => {
 			icon: CheckCircle,
 			color: "text-green-600",
 			bgColor: "bg-green-100 dark:bg-green-900",
+			trend: "20% de conclusão",
+			trendUp: true,
 		},
 	];
 
-	const recentProcesses = processes.slice(0, 5);
+	// Processos que precisam atenção (sem atualização há 30+ dias)
+	const processesNeedAttention = processes.filter(p => {
+		const daysSinceUpdate = Math.floor((new Date() - new Date(p.lastUpdate)) / (1000 * 60 * 60 * 24));
+		return daysSinceUpdate > 30 && p.status !== "Concluído";
+	});
+
+	// Atividade recente (últimos andamentos)
+	const recentActivity = processes.flatMap(p => 
+		p.timeline?.map(t => ({
+			...t,
+			processId: p.id,
+			processNumber: p.processNumber,
+			actionType: p.actionType,
+		})) || []
+	).sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 10);
 
 	return (
 		<div className="flex flex-col gap-6">
@@ -69,71 +136,183 @@ const AdminDashboard = () => {
 				</p>
 			</div>
 
-			{/* Stats Cards */}
-			<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-				{statsCards.map((stat) => {
-					const Icon = stat.icon;
-					return (
-						<Card key={stat.title}>
-							<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-								<CardTitle className="text-sm font-medium">
-									{stat.title}
-								</CardTitle>
-								<div className={`p-2 rounded-full ${stat.bgColor}`}>
-									<Icon className={`h-4 w-4 ${stat.color}`} />
+			{/* Cards de Estatísticas com Animação */}
+			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+				{statsCards.map((stat, index) => (
+					<Card key={index} className="hover:shadow-lg transition-shadow">
+						<CardContent>
+							<div className="flex items-start justify-between mb-4">
+								<div className="flex-1">
+									<p className="text-sm text-muted-foreground mb-1">{stat.title}</p>
+									<p className="text-3xl font-bold">{stat.value}</p>
 								</div>
-							</CardHeader>
-							<CardContent>
-								<div className="text-2xl font-bold">{stat.value}</div>
-							</CardContent>
-						</Card>
-					);
-				})}
+								<div className={`${stat.bgColor} p-3 rounded-full`}>
+									<stat.icon className={`h-6 w-6 ${stat.color}`} />
+								</div>
+							</div>
+							{stat.trend && (
+								<div className="flex items-center gap-1 text-sm">
+									{stat.trendUp !== null && (
+										<TrendingUp className={`h-3 w-3 ${stat.trendUp ? 'text-green-600' : 'text-gray-600'}`} />
+									)}
+									<span className={stat.trendUp ? 'text-green-600 font-medium' : 'text-muted-foreground'}>
+										{stat.trend}
+									</span>
+								</div>
+							)}
+						</CardContent>
+					</Card>
+				))}
 			</div>
 
-			{/* Recent Processes */}
-			<Card>
-				<CardHeader>
-					<CardTitle>Processos Recentes</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<div className="space-y-4">
-						{recentProcesses.length === 0 ? (
-							<p className="text-sm text-muted-foreground text-center py-4">
-								Nenhum processo cadastrado
-							</p>
-						) : (
-							recentProcesses.map((process) => (
-								<div
-									key={process.id}
-									className="flex items-center justify-between border-b pb-3 last:border-0"
-								>
-									<div className="flex-1">
-										<p className="font-medium">{process.title}</p>
-										<div className="flex gap-4 mt-1">
+			{/* Processos Precisando Atenção */}
+			{processesNeedAttention.length > 0 && (
+				<Card className="border-orange-200 dark:border-orange-800">
+					<CardHeader className="bg-orange-50 dark:bg-orange-950/20 mx-6 py-3 px-4 rounded-xl">
+						<div className="flex items-center gap-2">
+							<AlertTriangle className="h-5 w-5 text-orange-600" />
+							<CardTitle className="text-orange-900 dark:text-orange-100">Atenção Necessária</CardTitle>
+						</div>
+						<p className="text-sm text-orange-700 dark:text-orange-300">
+							Processos sem atualização há mais de 30 dias
+						</p>
+					</CardHeader>
+					<CardContent className="pt-0">
+						<div className="space-y-3">
+							{processesNeedAttention.map((process) => {
+								const daysSinceUpdate = Math.floor((new Date() - new Date(process.lastUpdate)) / (1000 * 60 * 60 * 24));
+								return (
+									<div
+										key={process.id}
+										className="flex items-center justify-between p-3 border border-orange-200 dark:border-orange-800 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-950/10 transition-colors cursor-pointer"
+										onClick={() => router.push(`/admin/dashboard/processos`)}
+									>
+										<div className="flex-1">
+											<p className="font-medium">{process.actionType}</p>
 											<p className="text-sm text-muted-foreground">
-												{process.processNumber}
+												{process.processNumber} - {process.clientName}
 											</p>
-											<p className="text-sm text-muted-foreground">
-												Cliente: {process.clientName}
+										</div>
+										<div className="text-right">
+											<span className="text-sm font-semibold text-orange-600">
+												Há {daysSinceUpdate} dias sem atualização
+											</span>
+										</div>
+									</div>
+								);
+							})}
+						</div>
+					</CardContent>
+				</Card>
+			)}
+
+			{/* Gráficos */}
+			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+				{/* Gráfico de Barras - Status dos Processos */}
+				<Card>
+					<CardHeader>
+						<CardTitle>Processos por Status</CardTitle>
+						<p className="text-sm text-muted-foreground">Distribuição atual por status</p>
+					</CardHeader>
+					<CardContent>
+						<ResponsiveContainer width="100%" height={300}>
+							<BarChart data={statusData}>
+								<CartesianGrid strokeDasharray="3 3" />
+								<XAxis dataKey="status" angle={-15} textAnchor="end" height={80} />
+								<YAxis />
+								<Tooltip />
+								<Bar dataKey="count" fill="#8884d8">
+									{statusData.map((entry, index) => (
+										<Cell key={`cell-${index}`} fill={entry.fill} />
+									))}
+								</Bar>
+							</BarChart>
+						</ResponsiveContainer>
+					</CardContent>
+				</Card>
+
+				{/* Gráfico de Linha - Evolução Mensal */}
+				<Card>
+					<CardHeader>
+						<CardTitle>Evolução Mensal</CardTitle>
+						<p className="text-sm text-muted-foreground">Processos novos nos últimos 6 meses</p>
+					</CardHeader>
+					<CardContent>
+						<ResponsiveContainer width="100%" height={300}>
+							<LineChart data={monthlyData}>
+								<CartesianGrid strokeDasharray="3 3" />
+								<XAxis dataKey="month" />
+								<YAxis />
+								<Tooltip />
+								<Line type="monotone" dataKey="processos" stroke="#8b5cf6" strokeWidth={2} />
+							</LineChart>
+						</ResponsiveContainer>
+					</CardContent>
+				</Card>
+
+				{/* Gráfico de Pizza - Distribuição por Tipo */}
+				{typeData.length > 0 && (
+					<Card>
+						<CardHeader>
+							<CardTitle>Distribuição por Área</CardTitle>
+							<p className="text-sm text-muted-foreground">Top 5 áreas mais comuns</p>
+						</CardHeader>
+						<CardContent>
+							<ResponsiveContainer width="100%" height={300}>
+								<PieChart>
+									<Pie
+										data={typeData}
+										cx="50%"
+										cy="50%"
+										labelLine={false}
+										label={(entry) => `${entry.name}: ${entry.value}`}
+										outerRadius={100}
+										fill="#8884d8"
+										dataKey="value"
+									>
+										{typeData.map((entry, index) => (
+											<Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+										))}
+									</Pie>
+									<Tooltip />
+								</PieChart>
+							</ResponsiveContainer>
+						</CardContent>
+					</Card>
+				)}
+
+				{/* Atividade Recente */}
+				<Card>
+					<CardHeader>
+						<CardTitle>Atividade Recente</CardTitle>
+						<p className="text-sm text-muted-foreground">Últimos andamentos registrados</p>
+					</CardHeader>
+					<CardContent>
+						<div className="space-y-4 max-h-[300px] overflow-y-auto">
+							{recentActivity.length === 0 ? (
+								<p className="text-muted-foreground text-center py-8">
+									Nenhum andamento registrado
+								</p>
+							) : (
+								recentActivity.map((activity, idx) => (
+									<div key={idx} className="flex items-start gap-3 pb-3 border-b last:border-0">
+										<div className="flex-shrink-0 w-2 h-2 mt-2 rounded-full bg-primary"></div>
+										<div className="flex-1 min-w-0">
+											<p className="font-medium text-sm truncate">{activity.title}</p>
+											<p className="text-xs text-muted-foreground truncate">
+												{activity.actionType} - {activity.processNumber}
+											</p>
+											<p className="text-xs text-muted-foreground mt-1">
+												{new Date(activity.date).toLocaleDateString("pt-BR")} - {activity.createdBy}
 											</p>
 										</div>
 									</div>
-									<span className={`text-xs px-2 py-1 rounded-full ${
-										process.status === "Concluído" 
-											? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-											: process.status === "Em andamento"
-											? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-											: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
-									}`}>
-										{process.status}
-									</span>
-								</div>
-							))
-						)}
-					</div>
-				</CardContent>
-			</Card>
+								))
+							)}
+						</div>
+					</CardContent>
+				</Card>
+			</div>
 		</div>
 	);
 };

@@ -16,9 +16,20 @@ const MOCK_PROCESSES = [
         clientId: 1,
         clientName: "Maria Silva Santos",
         processNumber: "0001234-56.2023.8.02.0001",
-        title: "Ação de Indenização por Danos Morais",
-        description: "Ação de indenização referente a acidente de trânsito",
+        actionType: "Ação de Indenização por Danos Morais",
+        court: "1ª Vara Cível da Comarca de Ourinhos",
+        plaintiff: "Maria Silva Santos",
+        defendant: "João Carlos Transportes Ltda.",
+        filingDate: "2023-03-15",
+        caseValue: "R$ 50.000,00",
+        subject: "Danos morais decorrentes de acidente de trânsito",
+        description: "Pedido de indenização por danos morais e materiais sofridos em acidente de trânsito causado por veículo da empresa ré",
         status: "Em andamento",
+        currentStage: "Aguardando realização de perícia técnica",
+        tags: [
+            "Cível"
+        ],
+        priority: "alta",
         lastUpdate: "2024-10-01",
         createdAt: "2023-03-15",
         timeline: [
@@ -27,6 +38,7 @@ const MOCK_PROCESSES = [
                 date: "2023-03-15",
                 title: "Processo Distribuído",
                 text: "Processo foi distribuído para a 1ª Vara Cível da Comarca de Ourinhos. Aguardando análise da petição inicial pelo juízo.",
+                type: "official",
                 attachments: [],
                 createdBy: "Fabio Candido Pereira",
                 createdAt: "2023-03-15T10:30:00"
@@ -36,6 +48,7 @@ const MOCK_PROCESSES = [
                 date: "2023-04-02",
                 title: "Petição Inicial Recebida",
                 text: "A petição inicial foi recebida e deferida pelo juízo. Determinada a citação da parte ré para apresentar contestação no prazo legal de 15 dias.",
+                type: "official",
                 attachments: [
                     {
                         id: 1,
@@ -52,6 +65,7 @@ const MOCK_PROCESSES = [
                 date: "2023-05-10",
                 title: "Contestação Apresentada",
                 text: "A parte ré apresentou contestação refutando os fatos alegados na inicial. Foi solicitada a produção de provas documentais e testemunhais.",
+                type: "official",
                 attachments: [],
                 createdBy: "Fabio Candido Pereira",
                 createdAt: "2023-05-10T09:15:00"
@@ -61,6 +75,7 @@ const MOCK_PROCESSES = [
                 date: "2023-06-20",
                 title: "Audiência de Conciliação Designada",
                 text: "Foi designada audiência de conciliação para o dia 15/08/2023 às 14h00. Importante sua presença para tentativa de acordo.",
+                type: "official",
                 attachments: [
                     {
                         id: 2,
@@ -77,6 +92,7 @@ const MOCK_PROCESSES = [
                 date: "2023-08-15",
                 title: "Audiência de Conciliação Realizada",
                 text: "Audiência de conciliação realizada. As partes não chegaram a um acordo. O processo seguirá para a fase de instrução probatória.",
+                type: "official",
                 attachments: [],
                 createdBy: "Fabio Candido Pereira",
                 createdAt: "2023-08-15T15:30:00"
@@ -86,6 +102,7 @@ const MOCK_PROCESSES = [
                 date: "2024-10-01",
                 title: "Perícia Técnica Deferida",
                 text: "O juízo deferiu a realização de perícia técnica para avaliação dos danos. O perito nomeado entrará em contato para agendar a vistoria.",
+                type: "official",
                 attachments: [
                     {
                         id: 3,
@@ -104,9 +121,21 @@ const MOCK_PROCESSES = [
         clientId: 1,
         clientName: "Maria Silva Santos",
         processNumber: "0007890-12.2024.8.02.0002",
-        title: "Revisão de Contrato - Incorporação Imobiliária",
-        description: "Ação revisional de cláusulas contratuais abusivas",
+        actionType: "Revisão de Contrato - Incorporação Imobiliária",
+        court: "3ª Vara Cível da Comarca de Ourinhos",
+        plaintiff: "Maria Silva Santos",
+        defendant: "Construtora Lar Feliz Ltda.",
+        filingDate: "2024-02-10",
+        caseValue: "R$ 250.000,00",
+        subject: "Revisão de cláusulas contratuais abusivas",
+        description: "Ação revisional de cláusulas contratuais abusivas em contrato de compra e venda de imóvel na planta",
         status: "Em andamento",
+        currentStage: "Aguardando juntada de documentos complementares",
+        tags: [
+            "Cível",
+            "Empresarial"
+        ],
+        priority: "media",
         lastUpdate: "2024-09-28",
         createdAt: "2024-02-10",
         timeline: [
@@ -115,6 +144,7 @@ const MOCK_PROCESSES = [
                 date: "2024-02-10",
                 title: "Processo Distribuído",
                 text: "Processo distribuído para a 3ª Vara Cível da Comarca de Ourinhos. Petição inicial protocolada com pedido de tutela de urgência.",
+                type: "official",
                 attachments: [],
                 createdBy: "Fabio Candido Pereira",
                 createdAt: "2024-02-10T09:00:00"
@@ -124,6 +154,7 @@ const MOCK_PROCESSES = [
                 date: "2024-03-05",
                 title: "Tutela de Urgência Deferida",
                 text: "Deferida a tutela de urgência para suspensão das cobranças até decisão final do processo. A construtora foi notificada da decisão.",
+                type: "official",
                 attachments: [
                     {
                         id: 4,
@@ -140,6 +171,7 @@ const MOCK_PROCESSES = [
                 date: "2024-09-28",
                 title: "Juntada de Documentos Complementares",
                 text: "Foram juntados aos autos os documentos complementares solicitados pelo juízo, incluindo extratos bancários e planilha de cálculo dos valores contestados.",
+                type: "official",
                 attachments: [
                     {
                         id: 5,
@@ -158,9 +190,20 @@ const MOCK_PROCESSES = [
         clientId: 1,
         clientName: "Maria Silva Santos",
         processNumber: "0003456-78.2024.8.02.0001",
-        title: "Inventário e Partilha de Bens",
-        description: "Inventário extrajudicial de bens do falecido",
+        actionType: "Inventário e Partilha de Bens",
+        court: "1º Tabelionato de Notas de Ourinhos",
+        plaintiff: "Maria Silva Santos (Inventariante)",
+        defendant: "N/A",
+        filingDate: "2024-08-01",
+        caseValue: "R$ 800.000,00",
+        subject: "Inventário extrajudicial de bens",
+        description: "Inventário extrajudicial para partilha de bens deixados pelo falecido José Silva Santos",
         status: "Aguardando documentação",
+        currentStage: "Pendente de documentação dos herdeiros",
+        tags: [
+            "Família"
+        ],
+        priority: "baixa",
         lastUpdate: "2024-09-15",
         createdAt: "2024-08-01",
         timeline: [
@@ -169,6 +212,7 @@ const MOCK_PROCESSES = [
                 date: "2024-08-01",
                 title: "Processo Iniciado",
                 text: "Processo de inventário iniciado no cartório. Aguardando documentação completa de todos os herdeiros.",
+                type: "official",
                 attachments: [],
                 createdBy: "Fabio Candido Pereira",
                 createdAt: "2024-08-01T14:00:00"
@@ -178,6 +222,7 @@ const MOCK_PROCESSES = [
                 date: "2024-09-15",
                 title: "Documentação Pendente",
                 text: "Identificamos que ainda faltam os seguintes documentos: certidão de casamento atualizada e documentos pessoais de um dos herdeiros. Por favor, providencie o quanto antes.",
+                type: "comment",
                 attachments: [
                     {
                         id: 6,
@@ -196,9 +241,20 @@ const MOCK_PROCESSES = [
         clientId: 2,
         clientName: "João Pedro Oliveira",
         processNumber: "0005678-90.2023.8.02.0003",
-        title: "Ação Trabalhista - Horas Extras",
-        description: "Reclamação trabalhista para pagamento de horas extras",
+        actionType: "Reclamação Trabalhista - Horas Extras",
+        court: "2ª Vara do Trabalho de Ourinhos",
+        plaintiff: "João Pedro Oliveira",
+        defendant: "Metalúrgica Santos Ltda.",
+        filingDate: "2023-06-20",
+        caseValue: "R$ 35.000,00",
+        subject: "Pagamento de horas extras e adicional noturno",
+        description: "Reclamação trabalhista para pagamento de horas extras não pagas durante o período de vínculo empregatício",
         status: "Em fase de recurso",
+        currentStage: "Recurso ordinário em análise no TRT",
+        tags: [
+            "Trabalhista"
+        ],
+        priority: "urgente",
         lastUpdate: "2024-09-20",
         createdAt: "2023-06-20",
         timeline: [
@@ -207,6 +263,7 @@ const MOCK_PROCESSES = [
                 date: "2023-06-20",
                 title: "Reclamação Trabalhista Distribuída",
                 text: "Reclamação trabalhista distribuída na 2ª Vara do Trabalho de Ourinhos. Pedido principal: pagamento de horas extras e adicional noturno.",
+                type: "official",
                 attachments: [],
                 createdBy: "Fabio Candido Pereira",
                 createdAt: "2023-06-20T11:00:00"
@@ -216,6 +273,7 @@ const MOCK_PROCESSES = [
                 date: "2023-07-15",
                 title: "Audiência Inicial Realizada",
                 text: "Realizada audiência inicial. A empresa apresentou defesa contestando os valores. Processo segue para instrução.",
+                type: "official",
                 attachments: [],
                 createdBy: "Fabio Candido Pereira",
                 createdAt: "2023-07-15T10:30:00"
@@ -225,6 +283,7 @@ const MOCK_PROCESSES = [
                 date: "2024-03-10",
                 title: "Sentença Publicada - Procedência Parcial",
                 text: "Sentença publicada com procedência parcial dos pedidos. Deferido o pagamento de 70% das horas extras pleiteadas. A empresa foi condenada ao pagamento.",
+                type: "official",
                 attachments: [
                     {
                         id: 7,
@@ -241,6 +300,7 @@ const MOCK_PROCESSES = [
                 date: "2024-09-20",
                 title: "Recurso Ordinário Interposto",
                 text: "A empresa recorrente interpôs recurso ordinário contestando o valor da condenação. Prazo para contrarrazões já foi cumprido. Aguardando julgamento no TRT.",
+                type: "official",
                 attachments: [],
                 createdBy: "Fabio Candido Pereira",
                 createdAt: "2024-09-20T09:45:00"
@@ -252,9 +312,20 @@ const MOCK_PROCESSES = [
         clientId: 3,
         clientName: "Ana Carolina Souza",
         processNumber: "0002345-67.2024.8.02.0001",
-        title: "Divórcio Consensual",
-        description: "Processo de divórcio consensual com partilha de bens",
+        actionType: "Divórcio Consensual",
+        court: "1ª Vara de Família da Comarca de Ourinhos",
+        plaintiff: "Ana Carolina Souza",
+        defendant: "Roberto Alves Souza",
+        filingDate: "2024-05-10",
+        caseValue: "R$ 0,00",
+        subject: "Dissolução do vínculo matrimonial e partilha de bens",
+        description: "Processo de divórcio consensual com partilha de bens e acordo sobre guarda dos filhos",
         status: "Concluído",
+        currentStage: "Processo encerrado - Sentença transitada em julgado",
+        tags: [
+            "Família"
+        ],
+        priority: "media",
         lastUpdate: "2024-08-30",
         createdAt: "2024-05-10",
         timeline: [
@@ -263,6 +334,7 @@ const MOCK_PROCESSES = [
                 date: "2024-05-10",
                 title: "Petição Inicial Protocolada",
                 text: "Petição inicial de divórcio consensual protocolada. Todas as questões já foram acordadas entre as partes.",
+                type: "official",
                 attachments: [],
                 createdBy: "Fabio Candido Pereira",
                 createdAt: "2024-05-10T10:00:00"
@@ -272,6 +344,7 @@ const MOCK_PROCESSES = [
                 date: "2024-06-20",
                 title: "Audiência de Ratificação Realizada",
                 text: "Realizada audiência onde ambas as partes ratificaram os termos do acordo. Partilha de bens homologada.",
+                type: "official",
                 attachments: [],
                 createdBy: "Fabio Candido Pereira",
                 createdAt: "2024-06-20T15:00:00"
@@ -281,6 +354,7 @@ const MOCK_PROCESSES = [
                 date: "2024-08-30",
                 title: "Sentença de Divórcio Proferida",
                 text: "Sentença de divórcio proferida e homologada. O processo foi concluído. As certidões já podem ser solicitadas no cartório.",
+                type: "official",
                 attachments: [
                     {
                         id: 8,
@@ -360,7 +434,7 @@ const useProcessStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node
                 return;
             }
             const lowerTerm = term.toLowerCase();
-            const results = MOCK_PROCESSES.filter((p)=>p.processNumber.toLowerCase().includes(lowerTerm) || p.title.toLowerCase().includes(lowerTerm) || p.description.toLowerCase().includes(lowerTerm) || p.clientName.toLowerCase().includes(lowerTerm));
+            const results = MOCK_PROCESSES.filter((p)=>p.processNumber.toLowerCase().includes(lowerTerm) || p.actionType.toLowerCase().includes(lowerTerm) || p.description.toLowerCase().includes(lowerTerm) || p.clientName.toLowerCase().includes(lowerTerm) || p.plaintiff.toLowerCase().includes(lowerTerm) || p.defendant.toLowerCase().includes(lowerTerm) || p.court.toLowerCase().includes(lowerTerm) || p.subject.toLowerCase().includes(lowerTerm));
             set({
                 searchResults: results,
                 isLoading: false
@@ -372,17 +446,59 @@ const useProcessStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node
                 searchResults: []
             });
         },
-        // Export PDF
+        // Export PDF no formato do relatório processual
         exportToPdf: async (processId)=>{
             set({
                 isLoading: true
             });
             // No futuro: await api.post(`/processes/${processId}/export-pdf`)
-            await new Promise((resolve)=>setTimeout(resolve, 1500));
+            await new Promise((resolve)=>setTimeout(resolve, 500));
             const process = MOCK_PROCESSES.find((p)=>p.id === processId);
             if (process) {
-                console.log("Gerando PDF para:", process.processNumber);
-                alert("PDF do processo ".concat(process.processNumber, " seria gerado aqui."));
+                // Gerar conteúdo do relatório no formato do cliente
+                let reportContent = "RELATÓRIO PROCESSUAL\n\n";
+                reportContent += "DADOS DO PROCESSO:\n";
+                reportContent += "Nº do processo: ".concat(process.processNumber, "\n");
+                reportContent += "Juízo: ".concat(process.court, "\n");
+                reportContent += "Cliente: ".concat(process.clientName, "\n");
+                reportContent += "Réu (parte contrária): ".concat(process.defendant, "\n");
+                reportContent += "Data do ajuizamento: ".concat(new Date(process.filingDate).toLocaleDateString("pt-BR"), "\n");
+                reportContent += "Valor da Causa: ".concat(process.caseValue, "\n");
+                reportContent += "Assunto principal do processo: ".concat(process.subject, "\n\n");
+                reportContent += "Andamentos do processo:\n";
+                // Ordenar timeline por data (do mais antigo para o mais novo)
+                const sortedTimeline = [
+                    ...process.timeline
+                ].sort((a, b)=>new Date(a.date) - new Date(b.date));
+                sortedTimeline.forEach((item)=>{
+                    const formattedDate = new Date(item.date).toLocaleDateString("pt-BR", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric"
+                    });
+                    reportContent += "".concat(formattedDate, ": ").concat(item.title, ": ").concat(item.text, "\n");
+                    if (item.attachments && item.attachments.length > 0) {
+                        reportContent += "   Anexos: ".concat(item.attachments.map((a)=>a.name).join(", "), "\n");
+                    }
+                    reportContent += "\n";
+                });
+                reportContent += "\n";
+                reportContent += "ESTÁGIO ATUAL: ".concat(process.currentStage || process.status, "\n");
+                reportContent += "\nRelatório gerado em: ".concat(new Date().toLocaleDateString("pt-BR"), " às ").concat(new Date().toLocaleTimeString("pt-BR"));
+                // Criar e fazer download do arquivo
+                const blob = new Blob([
+                    reportContent
+                ], {
+                    type: "text/plain;charset=utf-8"
+                });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "Relatorio_Processual_".concat(process.processNumber.replace(/[^\d]/g, ""), ".txt");
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
             }
             set({
                 isLoading: false
@@ -477,9 +593,10 @@ const useProcessStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node
                 const newTimeline = {
                     id: process.timeline.length + 1,
                     ...timelineData,
-                    date: new Date().toISOString().split("T")[0],
+                    date: timelineData.date || new Date().toISOString().split("T")[0],
                     createdAt: new Date().toISOString(),
-                    attachments: []
+                    attachments: timelineData.attachments || [],
+                    type: timelineData.type || "official"
                 };
                 process.timeline.push(newTimeline);
                 process.lastUpdate = new Date().toISOString().split("T")[0];
@@ -495,6 +612,100 @@ const useProcessStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node
                 return {
                     success: true,
                     timeline: newTimeline
+                };
+            }
+            set({
+                isLoading: false,
+                error: "Processo não encontrado"
+            });
+            return {
+                success: false,
+                error: "Processo não encontrado"
+            };
+        },
+        // Deletar andamento de um processo
+        deleteTimeline: async (processId, timelineId)=>{
+            set({
+                isLoading: true,
+                error: null
+            });
+            // No futuro: await api.delete(`/processes/${processId}/timeline/${timelineId}`)
+            await new Promise((resolve)=>setTimeout(resolve, 500));
+            const process = MOCK_PROCESSES.find((p)=>p.id === processId);
+            if (process) {
+                const timelineIndex = process.timeline.findIndex((t)=>t.id === timelineId);
+                if (timelineIndex !== -1) {
+                    process.timeline.splice(timelineIndex, 1);
+                    process.lastUpdate = new Date().toISOString().split("T")[0];
+                    set({
+                        selectedProcess: {
+                            ...process
+                        },
+                        processes: [
+                            ...MOCK_PROCESSES
+                        ],
+                        isLoading: false
+                    });
+                    return {
+                        success: true
+                    };
+                }
+                set({
+                    isLoading: false,
+                    error: "Andamento não encontrado"
+                });
+                return {
+                    success: false,
+                    error: "Andamento não encontrado"
+                };
+            }
+            set({
+                isLoading: false,
+                error: "Processo não encontrado"
+            });
+            return {
+                success: false,
+                error: "Processo não encontrado"
+            };
+        },
+        // Atualizar andamento de um processo
+        updateTimeline: async (processId, timelineId, timelineData)=>{
+            set({
+                isLoading: true,
+                error: null
+            });
+            // No futuro: await api.put(`/processes/${processId}/timeline/${timelineId}`, timelineData)
+            await new Promise((resolve)=>setTimeout(resolve, 500));
+            const process = MOCK_PROCESSES.find((p)=>p.id === processId);
+            if (process) {
+                const timelineIndex = process.timeline.findIndex((t)=>t.id === timelineId);
+                if (timelineIndex !== -1) {
+                    process.timeline[timelineIndex] = {
+                        ...process.timeline[timelineIndex],
+                        ...timelineData
+                    };
+                    process.lastUpdate = new Date().toISOString().split("T")[0];
+                    set({
+                        selectedProcess: {
+                            ...process
+                        },
+                        processes: [
+                            ...MOCK_PROCESSES
+                        ],
+                        isLoading: false
+                    });
+                    return {
+                        success: true,
+                        timeline: process.timeline[timelineIndex]
+                    };
+                }
+                set({
+                    isLoading: false,
+                    error: "Andamento não encontrado"
+                });
+                return {
+                    success: false,
+                    error: "Andamento não encontrado"
                 };
             }
             set({
@@ -838,6 +1049,7 @@ var _s = __turbopack_context__.k.signature();
 ;
 ;
 ;
+;
 const AdminDashboard = ()=>{
     _s();
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
@@ -860,37 +1072,129 @@ const AdminDashboard = ()=>{
     ]);
     const processStats = getStats();
     const clientStats = getClientStats();
+    // Dados para gráficos
+    const statusData = [
+        {
+            status: "Em andamento",
+            count: processes.filter((p)=>p.status === "Em andamento").length,
+            fill: "#3b82f6"
+        },
+        {
+            status: "Aguardando doc",
+            count: processes.filter((p)=>p.status === "Aguardando documentação").length,
+            fill: "#eab308"
+        },
+        {
+            status: "Em recurso",
+            count: processes.filter((p)=>p.status === "Em fase de recurso").length,
+            fill: "#a855f7"
+        },
+        {
+            status: "Concluído",
+            count: processes.filter((p)=>p.status === "Concluído").length,
+            fill: "#22c55e"
+        }
+    ];
+    const monthlyData = [
+        {
+            month: "Mai",
+            processos: 1
+        },
+        {
+            month: "Jun",
+            processos: 1
+        },
+        {
+            month: "Jul",
+            processos: 0
+        },
+        {
+            month: "Ago",
+            processos: 2
+        },
+        {
+            month: "Set",
+            processos: 0
+        },
+        {
+            month: "Out",
+            processos: 1
+        }
+    ];
+    const typeData = processes.reduce((acc, process)=>{
+        var _process_tags;
+        const type = ((_process_tags = process.tags) === null || _process_tags === void 0 ? void 0 : _process_tags[0]) || "Outros";
+        const existing = acc.find((item)=>item.name === type);
+        if (existing) {
+            existing.value += 1;
+        } else {
+            acc.push({
+                name: type,
+                value: 1
+            });
+        }
+        return acc;
+    }, []).slice(0, 5);
+    const COLORS = [
+        '#3b82f6',
+        '#22c55e',
+        '#eab308',
+        '#a855f7',
+        '#f97316'
+    ];
     const statsCards = [
         {
             title: "Total de Clientes",
             value: clientStats.totalClients,
             icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$users$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Users$3e$__["Users"],
             color: "text-blue-600",
-            bgColor: "bg-blue-100 dark:bg-blue-900"
+            bgColor: "bg-blue-100 dark:bg-blue-900",
+            trend: "+2 este mês",
+            trendUp: true
         },
         {
             title: "Total de Processos",
             value: processStats.totalProcesses,
             icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$file$2d$text$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__FileText$3e$__["FileText"],
             color: "text-purple-600",
-            bgColor: "bg-purple-100 dark:bg-purple-900"
+            bgColor: "bg-purple-100 dark:bg-purple-900",
+            trend: "+1 este mês",
+            trendUp: true
         },
         {
             title: "Processos Ativos",
             value: processStats.activeProcesses,
             icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$clock$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Clock$3e$__["Clock"],
             color: "text-yellow-600",
-            bgColor: "bg-yellow-100 dark:bg-yellow-900"
+            bgColor: "bg-yellow-100 dark:bg-yellow-900",
+            trend: "".concat(processStats.activeProcesses, " em andamento"),
+            trendUp: null
         },
         {
             title: "Processos Concluídos",
             value: processStats.completedProcesses,
             icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$circle$2d$check$2d$big$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__CheckCircle$3e$__["CheckCircle"],
             color: "text-green-600",
-            bgColor: "bg-green-100 dark:bg-green-900"
+            bgColor: "bg-green-100 dark:bg-green-900",
+            trend: "20% de conclusão",
+            trendUp: true
         }
     ];
-    const recentProcesses = processes.slice(0, 5);
+    // Processos que precisam atenção (sem atualização há 30+ dias)
+    const processesNeedAttention = processes.filter((p)=>{
+        const daysSinceUpdate = Math.floor((new Date() - new Date(p.lastUpdate)) / (1000 * 60 * 60 * 24));
+        return daysSinceUpdate > 30 && p.status !== "Concluído";
+    });
+    // Atividade recente (últimos andamentos)
+    const recentActivity = processes.flatMap((p)=>{
+        var _p_timeline;
+        return ((_p_timeline = p.timeline) === null || _p_timeline === void 0 ? void 0 : _p_timeline.map((t)=>({
+                ...t,
+                processId: p.id,
+                processNumber: p.processNumber,
+                actionType: p.actionType
+            }))) || [];
+    }).sort((a, b)=>new Date(b.date) - new Date(a.date)).slice(0, 10);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "flex flex-col gap-6",
         children: [
@@ -902,7 +1206,7 @@ const AdminDashboard = ()=>{
                         children: "Dashboard"
                     }, void 0, false, {
                         fileName: "[project]/app/admin/dashboard/page.jsx",
-                        lineNumber: 66,
+                        lineNumber: 133,
                         columnNumber: 5
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -910,13 +1214,13 @@ const AdminDashboard = ()=>{
                         children: "Visão geral do sistema Consulte seu Processo"
                     }, void 0, false, {
                         fileName: "[project]/app/admin/dashboard/page.jsx",
-                        lineNumber: 67,
+                        lineNumber: 134,
                         columnNumber: 5
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/admin/dashboard/page.jsx",
-                lineNumber: 65,
+                lineNumber: 132,
                 columnNumber: 4
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -933,7 +1237,7 @@ const AdminDashboard = ()=>{
                                         children: stat.title
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/dashboard/page.jsx",
-                                        lineNumber: 79,
+                                        lineNumber: 146,
                                         columnNumber: 9
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -942,18 +1246,18 @@ const AdminDashboard = ()=>{
                                             className: "h-4 w-4 ".concat(stat.color)
                                         }, void 0, false, {
                                             fileName: "[project]/app/admin/dashboard/page.jsx",
-                                            lineNumber: 83,
+                                            lineNumber: 150,
                                             columnNumber: 10
                                         }, ("TURBOPACK compile-time value", void 0))
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/dashboard/page.jsx",
-                                        lineNumber: 82,
+                                        lineNumber: 149,
                                         columnNumber: 9
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/admin/dashboard/page.jsx",
-                                lineNumber: 78,
+                                lineNumber: 145,
                                 columnNumber: 8
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -962,24 +1266,24 @@ const AdminDashboard = ()=>{
                                     children: stat.value
                                 }, void 0, false, {
                                     fileName: "[project]/app/admin/dashboard/page.jsx",
-                                    lineNumber: 87,
+                                    lineNumber: 154,
                                     columnNumber: 9
                                 }, ("TURBOPACK compile-time value", void 0))
                             }, void 0, false, {
                                 fileName: "[project]/app/admin/dashboard/page.jsx",
-                                lineNumber: 86,
+                                lineNumber: 153,
                                 columnNumber: 8
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, stat.title, true, {
                         fileName: "[project]/app/admin/dashboard/page.jsx",
-                        lineNumber: 77,
+                        lineNumber: 144,
                         columnNumber: 7
                     }, ("TURBOPACK compile-time value", void 0));
                 })
             }, void 0, false, {
                 fileName: "[project]/app/admin/dashboard/page.jsx",
-                lineNumber: 73,
+                lineNumber: 140,
                 columnNumber: 4
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -989,12 +1293,12 @@ const AdminDashboard = ()=>{
                             children: "Processos Recentes"
                         }, void 0, false, {
                             fileName: "[project]/app/admin/dashboard/page.jsx",
-                            lineNumber: 97,
+                            lineNumber: 164,
                             columnNumber: 6
                         }, ("TURBOPACK compile-time value", void 0))
                     }, void 0, false, {
                         fileName: "[project]/app/admin/dashboard/page.jsx",
-                        lineNumber: 96,
+                        lineNumber: 163,
                         columnNumber: 5
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1005,7 +1309,7 @@ const AdminDashboard = ()=>{
                                 children: "Nenhum processo cadastrado"
                             }, void 0, false, {
                                 fileName: "[project]/app/admin/dashboard/page.jsx",
-                                lineNumber: 102,
+                                lineNumber: 169,
                                 columnNumber: 8
                             }, ("TURBOPACK compile-time value", void 0)) : recentProcesses.map((process)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "flex items-center justify-between border-b pb-3 last:border-0",
@@ -1018,7 +1322,7 @@ const AdminDashboard = ()=>{
                                                     children: process.title
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/admin/dashboard/page.jsx",
-                                                    lineNumber: 112,
+                                                    lineNumber: 179,
                                                     columnNumber: 11
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1029,7 +1333,7 @@ const AdminDashboard = ()=>{
                                                             children: process.processNumber
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/admin/dashboard/page.jsx",
-                                                            lineNumber: 114,
+                                                            lineNumber: 181,
                                                             columnNumber: 12
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1040,19 +1344,19 @@ const AdminDashboard = ()=>{
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/app/admin/dashboard/page.jsx",
-                                                            lineNumber: 117,
+                                                            lineNumber: 184,
                                                             columnNumber: 12
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/admin/dashboard/page.jsx",
-                                                    lineNumber: 113,
+                                                    lineNumber: 180,
                                                     columnNumber: 11
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/admin/dashboard/page.jsx",
-                                            lineNumber: 111,
+                                            lineNumber: 178,
                                             columnNumber: 10
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1060,35 +1364,35 @@ const AdminDashboard = ()=>{
                                             children: process.status
                                         }, void 0, false, {
                                             fileName: "[project]/app/admin/dashboard/page.jsx",
-                                            lineNumber: 122,
+                                            lineNumber: 189,
                                             columnNumber: 10
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, process.id, true, {
                                     fileName: "[project]/app/admin/dashboard/page.jsx",
-                                    lineNumber: 107,
+                                    lineNumber: 174,
                                     columnNumber: 9
                                 }, ("TURBOPACK compile-time value", void 0)))
                         }, void 0, false, {
                             fileName: "[project]/app/admin/dashboard/page.jsx",
-                            lineNumber: 100,
+                            lineNumber: 167,
                             columnNumber: 6
                         }, ("TURBOPACK compile-time value", void 0))
                     }, void 0, false, {
                         fileName: "[project]/app/admin/dashboard/page.jsx",
-                        lineNumber: 99,
+                        lineNumber: 166,
                         columnNumber: 5
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/admin/dashboard/page.jsx",
-                lineNumber: 95,
+                lineNumber: 162,
                 columnNumber: 4
             }, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true, {
         fileName: "[project]/app/admin/dashboard/page.jsx",
-        lineNumber: 64,
+        lineNumber: 131,
         columnNumber: 3
     }, ("TURBOPACK compile-time value", void 0));
 };

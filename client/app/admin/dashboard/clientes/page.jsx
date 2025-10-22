@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { useAuthStore } from "@/store/auth-store";
 import { useClientStore } from "@/store/client-store";
 import { useProcessStore } from "@/store/process-store";
@@ -20,12 +21,12 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Mail, Phone, User, FileText, Calendar, Eye } from "lucide-react";
+import { Plus, Mail, Phone, User, FileText, Calendar, Eye, Edit } from "lucide-react";
 
 const ClientesPage = () => {
 	const router = useRouter();
 	const { isAuthenticated, isAdmin } = useAuthStore();
-	const { clients, fetchClients, addClient, isLoading } = useClientStore();
+	const { clients, fetchClients, addClient, updateClient, isLoading } = useClientStore();
 	const { getProcessesByClient } = useProcessStore();
 	
 	// Estados para Dialog de Novo Cliente
@@ -42,6 +43,15 @@ const ClientesPage = () => {
 	const [selectedClient, setSelectedClient] = useState(null);
 	const [clientProcesses, setClientProcesses] = useState([]);
 
+	// Estados para Dialog de Edição
+	const [openEditClient, setOpenEditClient] = useState(false);
+	const [editFormData, setEditFormData] = useState({
+		name: "",
+		email: "",
+		cpf: "",
+		phone: "",
+	});
+
 	useEffect(() => {
 		if (!isAuthenticated) {
 			router.push("/login");
@@ -54,11 +64,17 @@ const ClientesPage = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		toast.loading("Cadastrando cliente...");
 		const result = await addClient(formData);
+		toast.dismiss();
+
 		if (result.success) {
+			toast.success("Cliente cadastrado com sucesso!");
 			setFormData({ name: "", email: "", cpf: "", phone: "" });
 			setOpenNewClient(false);
 			await fetchClients();
+		} else {
+			toast.error("Erro ao cadastrar cliente. Tente novamente.");
 		}
 	};
 
@@ -67,6 +83,32 @@ const ClientesPage = () => {
 		const processes = getProcessesByClient(client.id);
 		setClientProcesses(processes);
 		setOpenViewProcesses(true);
+	};
+
+	const handleEditClient = (client) => {
+		setSelectedClient(client);
+		setEditFormData({
+			name: client.name,
+			email: client.email,
+			cpf: client.cpf,
+			phone: client.phone,
+		});
+		setOpenEditClient(true);
+	};
+
+	const handleUpdateSubmit = async (e) => {
+		e.preventDefault();
+		toast.loading("Salvando alterações...");
+		const result = await updateClient(selectedClient.id, editFormData);
+		toast.dismiss();
+
+		if (result.success) {
+			toast.success("Cliente atualizado com sucesso!");
+			setOpenEditClient(false);
+			await fetchClients();
+		} else {
+			toast.error("Erro ao atualizar cliente. Tente novamente.");
+		}
 	};
 
 	return (
@@ -200,6 +242,14 @@ const ClientesPage = () => {
 									<Button
 										variant="outline"
 										size="sm"
+										onClick={() => handleEditClient(client)}
+									>
+										<Edit className="h-4 w-4 mr-1" />
+										Editar
+									</Button>
+									<Button
+										variant="outline"
+										size="sm"
 										onClick={() => handleViewProcesses(client)}
 									>
 										<Eye className="h-4 w-4 mr-1" />
@@ -211,6 +261,87 @@ const ClientesPage = () => {
 					</Card>
 				))}
 			</div>
+
+			{/* Dialog de Edição de Cliente */}
+			<Dialog open={openEditClient} onOpenChange={setOpenEditClient}>
+				<DialogContent className="max-w-2xl">
+					<DialogHeader>
+						<DialogTitle>Editar Cliente</DialogTitle>
+						<DialogDescription>
+							Atualize as informações do cliente
+						</DialogDescription>
+					</DialogHeader>
+					<form onSubmit={handleUpdateSubmit}>
+						<div className="grid gap-4 py-4">
+							<div className="grid grid-cols-2 gap-4">
+								<div className="grid gap-2">
+									<Label htmlFor="edit-name">Nome Completo *</Label>
+									<Input
+										id="edit-name"
+										placeholder="Nome completo do cliente"
+										value={editFormData.name}
+										onChange={(e) =>
+											setEditFormData({ ...editFormData, name: e.target.value })
+										}
+										required
+									/>
+								</div>
+								<div className="grid gap-2">
+									<Label htmlFor="edit-email">Email *</Label>
+									<Input
+										id="edit-email"
+										type="email"
+										placeholder="email@exemplo.com"
+										value={editFormData.email}
+										onChange={(e) =>
+											setEditFormData({ ...editFormData, email: e.target.value })
+										}
+										required
+									/>
+								</div>
+							</div>
+							<div className="grid grid-cols-2 gap-4">
+								<div className="grid gap-2">
+									<Label htmlFor="edit-cpf">CPF *</Label>
+									<Input
+										id="edit-cpf"
+										value={editFormData.cpf}
+										onChange={(e) =>
+											setEditFormData({ ...editFormData, cpf: e.target.value })
+										}
+										placeholder="000.000.000-00"
+										required
+									/>
+								</div>
+								<div className="grid gap-2">
+									<Label htmlFor="edit-phone">Telefone *</Label>
+									<Input
+										id="edit-phone"
+										value={editFormData.phone}
+										onChange={(e) =>
+											setEditFormData({ ...editFormData, phone: e.target.value })
+										}
+										placeholder="(00) 00000-0000"
+										required
+									/>
+								</div>
+							</div>
+						</div>
+						<DialogFooter>
+							<Button
+								type="button"
+								variant="outline"
+								onClick={() => setOpenEditClient(false)}
+							>
+								Cancelar
+							</Button>
+							<Button type="submit" disabled={isLoading}>
+								{isLoading ? "Salvando..." : "Salvar Alterações"}
+							</Button>
+						</DialogFooter>
+					</form>
+				</DialogContent>
+			</Dialog>
 
 			{/* Dialog de Ver Processos */}
 			<Dialog open={openViewProcesses} onOpenChange={setOpenViewProcesses}>

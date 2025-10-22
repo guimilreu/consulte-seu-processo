@@ -73,8 +73,8 @@ const LoginPage = () => {
 							{error && <p className="text-sm text-destructive">{error}</p>}
 						</CardContent>
 
-						<CardFooter className="pt-6">
-							<Button type="submit" className="w-full font-bold" disabled={isLoading}>
+						<CardFooter>
+							<Button type="submit" className="w-full font-bold mt-6" disabled={isLoading}>
 								{isLoading && <Spinner2 />}
 								Entrar
 							</Button>

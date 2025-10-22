@@ -123,9 +123,9 @@ const Navbar = () => {
 								<User className="mr-2 h-4 w-4" />
 								<span>Perfil</span>
 							</DropdownMenuItem> */}
-							<DropdownMenuSeparator />
+							{/* <DropdownMenuSeparator /> */}
 							<DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive">
-								<LogOut className="mr-2 h-4 w-4" />
+								<LogOut className="h-4 w-4 text-destructive" />
 								<span>Sair</span>
 							</DropdownMenuItem>
 						</DropdownMenuContent>
