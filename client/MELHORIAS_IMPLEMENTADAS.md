@@ -65,7 +65,7 @@ Lista completa com:
 
 ### 3. **Andamentos do Processo**
 
-#### ✔️ Deletar Andamentos Específicos
+#### ✔️ Excluir Andamentos Específicos
 **Implementado:**
 - Função `deleteTimeline()` no store
 - Botão de exclusão em cada andamento (apenas admin)
@@ -297,7 +297,7 @@ Andamentos do processo:
 ## 🚀 Funcionalidades do Store Atualizadas
 
 **Novas funções:**
-- `deleteTimeline(processId, timelineId)` - Deletar andamentos
+- `deleteTimeline(processId, timelineId)` - Excluir andamentos
 - `updateTimeline(processId, timelineId, data)` - Editar andamentos
 - `exportToPdf(processId)` - Exportar relatório formatado
 
@@ -386,7 +386,7 @@ Andamentos do processo:
    - Preview antes de salvar
 
 3. **Gerenciar andamentos:**
-   - Deletar qualquer andamento
+   - Excluir qualquer andamento
    - Ver histórico completo
    - Editar informações
 

@@ -150,7 +150,7 @@ export const useProcessStore = create((set, get) => ({
 		}
 	},
 
-	// Deletar processo (admin)
+	// Excluir processo (admin)
 	deleteProcess: async (processId) => {
 		set({ isLoading: true, error: null });
 		try {
@@ -181,7 +181,7 @@ export const useProcessStore = create((set, get) => ({
 		}
 	},
 
-	// Deletar andamento de um processo
+	// Excluir andamento de um processo
 	deleteTimeline: async (processId, timelineId) => {
 		set({ isLoading: true, error: null });
 		try {

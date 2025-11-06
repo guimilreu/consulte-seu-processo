@@ -311,7 +311,7 @@ const ClientesPage = () => {
 											className="text-destructive hover:text-destructive"
 										>
 											<Trash2 className="h-4 w-4 mr-1" />
-											Deletar
+											Excluir
 										</Button>
 									</div>
 								</div>
@@ -525,14 +525,14 @@ const ClientesPage = () => {
 				</DialogContent>
 			</Dialog>
 
-			{/* Dialog de Confirmação para Deletar Cliente */}
+			{/* Dialog de Confirmação para Excluir Cliente */}
 			<ConfirmationDialog
 				open={confirmDeleteClient}
 				onOpenChange={setConfirmDeleteClient}
-				title="Deletar Cliente"
+				title="Excluir Cliente"
 				description={`Tem certeza que deseja deletar o cliente "${clientToDelete?.name}"? Esta ação não pode ser desfeita.`}
 				onConfirm={handleDeleteClient}
-				confirmLabel="Deletar"
+				confirmLabel="Excluir"
 				cancelLabel="Cancelar"
 			/>
 		</div>

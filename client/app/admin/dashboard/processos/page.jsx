@@ -1261,7 +1261,7 @@ const ProcessosPage = () => {
 												className="text-destructive hover:text-destructive"
 											>
 												<Trash2 className="h-4 w-4 mr-1" />
-												Deletar
+												Excluir
 											</Button>
 										</div>
 									</div>
@@ -1826,25 +1826,25 @@ const ProcessosPage = () => {
 				</DialogContent>
 			</Dialog>
 
-			{/* Dialog de Confirmação para Deletar Andamento */}
+			{/* Dialog de Confirmação para Excluir Andamento */}
 			<ConfirmationDialog
 				open={confirmDelete}
 				onOpenChange={setConfirmDelete}
-				title="Deletar Andamento"
+				title="Excluir Andamento"
 				description={`Tem certeza que deseja deletar o andamento "${timelineToDelete?.title}"? Esta ação não pode ser desfeita.`}
 				onConfirm={handleDeleteTimeline}
-				confirmLabel="Deletar"
+				confirmLabel="Excluir"
 				cancelLabel="Cancelar"
 			/>
 
-			{/* Dialog de Confirmação para Deletar Processo */}
+			{/* Dialog de Confirmação para Excluir Processo */}
 			<ConfirmationDialog
 				open={confirmDeleteProcess}
 				onOpenChange={setConfirmDeleteProcess}
-				title="Deletar Processo"
+				title="Excluir Processo"
 				description={`Tem certeza que deseja deletar o processo "${processToDelete?.processNumber}"? Esta ação não pode ser desfeita.`}
 				onConfirm={handleDeleteProcess}
-				confirmLabel="Deletar"
+				confirmLabel="Excluir"
 				cancelLabel="Cancelar"
 			/>
 		</div>
