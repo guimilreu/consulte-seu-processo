@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///Users/guimilreu/Documents/consulte-seu-processo/client/app/admin/dashboard/layout.jsx"],"sourcesContent":["import React from 'react'\n\n\nconst DashboardLayout = () => {\n  return (\n\t<div>DashboardLayout</div>\n  )\n}\n\nexport default DashboardLayout"],"names":[],"mappings":";;;;;AAAA;;;AAGA,MAAM,kBAAkB;IACtB,qBACD,8OAAC;kBAAI;;;;;;AAEN;uCAEe","debugId":null}}]
-}

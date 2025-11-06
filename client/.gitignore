@@ -21,6 +21,9 @@ node_modules/
 .next/
 **/.next/
 /out/
+*.next
+*.next/**
+*/.next
 
 # production
 /build
