@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth-store";
 import { useProcessStore } from "@/store/process-store";
@@ -8,23 +8,42 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Button } from "@/components/ui/button";
 import { FileText, Calendar, ChevronRight, Scale, Building2, FolderOpen, Clock, CheckCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import ProcessViewDialog from "@/components/process/ProcessViewDialog";
 
 const Dashboard = () => {
 	const router = useRouter();
-	const { user, isAuthenticated } = useAuthStore();
+	const { user } = useAuthStore();
 	const { processes, fetchMyProcesses, fetchProcess, isLoading } = useProcessStore();
+	const [openViewDialog, setOpenViewDialog] = useState(false);
+	const [selectedProcess, setSelectedProcess] = useState(null);
 
 	useEffect(() => {
-		if (!isAuthenticated) {
-			router.push("/login");
-		} else if (user) {
-			fetchMyProcesses(user.id);
+		if (user) {
+			fetchMyProcesses(user._id || user.id);
 		}
-	}, [isAuthenticated, user]);
+	}, [user, fetchMyProcesses]);
 
 	const handleProcessClick = async (processId) => {
-		await fetchProcess(processId);
-		router.push(`/dashboard/processo/${processId}`);
+		// Buscar o processo da lista já carregada
+		const process = processes.find(p => {
+			const pId = p._id || p.id;
+			return pId === processId || pId?.toString() === processId?.toString();
+		});
+		
+		if (process) {
+			// Buscar dados completos do processo
+			await fetchProcess(processId);
+			setSelectedProcess(process);
+			setOpenViewDialog(true);
+		}
+	};
+
+	const handleEditFromView = () => {
+		if (selectedProcess) {
+			setOpenViewDialog(false);
+			const processId = selectedProcess._id || selectedProcess.id;
+			router.push(`/dashboard/processo/${processId}`);
+		}
 	};
 
 	// Estatísticas para o cliente
@@ -119,11 +138,12 @@ const Dashboard = () => {
 				<div className="grid gap-4">
 					{processes.map((process) => {
 						const newUpdates = getNewUpdatesCount(process);
+						const processId = process._id || process.id;
 						return (
 							<Card 
-								key={process.id} 
+								key={processId} 
 								className="hover:shadow-lg transition-all cursor-pointer border-2 hover:border-primary/50 relative" 
-								onClick={() => handleProcessClick(process.id)}
+								onClick={() => handleProcessClick(processId)}
 							>
 								{/* Badge de Novidade */}
 								{newUpdates > 0 && (
@@ -197,6 +217,14 @@ const Dashboard = () => {
 					})}
 				</div>
 			)}
+
+			{/* Dialog de Visualização */}
+			<ProcessViewDialog
+				open={openViewDialog}
+				onOpenChange={setOpenViewDialog}
+				process={selectedProcess}
+				onEdit={handleEditFromView}
+			/>
 		</div>
 	);
 };

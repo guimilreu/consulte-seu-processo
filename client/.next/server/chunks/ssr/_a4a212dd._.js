@@ -7,51 +7,10 @@ __turbopack_context__.s([
     ()=>useClientStore
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zustand$2f$esm$2f$react$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/zustand/esm/react.mjs [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/api.js [app-ssr] (ecmascript)");
 "use client";
 ;
-// Dados mockados - No futuro virão da API
-const MOCK_CLIENTS = [
-    {
-        id: 1,
-        name: "Maria Silva Santos",
-        email: "maria.santos@email.com",
-        cpf: "123.456.789-00",
-        phone: "(14) 99999-1111",
-        createdAt: "2023-01-15",
-        processCount: 3,
-        role: "client"
-    },
-    {
-        id: 2,
-        name: "João Pedro Oliveira",
-        email: "joao.oliveira@email.com",
-        cpf: "987.654.321-00",
-        phone: "(14) 99999-2222",
-        createdAt: "2023-04-20",
-        processCount: 1,
-        role: "client"
-    },
-    {
-        id: 3,
-        name: "Ana Carolina Souza",
-        email: "ana.souza@email.com",
-        cpf: "456.789.123-00",
-        phone: "(14) 99999-3333",
-        createdAt: "2024-02-10",
-        processCount: 1,
-        role: "client"
-    },
-    {
-        id: 4,
-        name: "Pedro Henrique Costa",
-        email: "pedro.costa@email.com",
-        cpf: "321.654.987-00",
-        phone: "(14) 99999-4444",
-        createdAt: "2024-05-05",
-        processCount: 0,
-        role: "client"
-    }
-];
+;
 const useClientStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zustand$2f$esm$2f$react$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["create"])((set, get)=>({
         // State
         clients: [],
@@ -64,95 +23,113 @@ const useClientStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_
                 isLoading: true,
                 error: null
             });
-            // No futuro: await api.get('/clients')
-            await new Promise((resolve)=>setTimeout(resolve, 800));
-            set({
-                clients: MOCK_CLIENTS,
-                isLoading: false
-            });
+            try {
+                const response = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].get('/clients');
+                set({
+                    clients: response.clients,
+                    isLoading: false
+                });
+            } catch (error) {
+                set({
+                    error: error.message,
+                    isLoading: false
+                });
+            }
         },
         addClient: async (clientData)=>{
             set({
                 isLoading: true,
                 error: null
             });
-            // No futuro: await api.post('/clients', clientData)
-            await new Promise((resolve)=>setTimeout(resolve, 1000));
-            const newClient = {
-                id: MOCK_CLIENTS.length + 1,
-                ...clientData,
-                createdAt: new Date().toISOString().split("T")[0],
-                processCount: 0,
-                role: "client"
-            };
-            MOCK_CLIENTS.push(newClient);
-            set({
-                clients: [
-                    ...MOCK_CLIENTS
-                ],
-                isLoading: false
-            });
-            return {
-                success: true,
-                client: newClient
-            };
+            try {
+                const response = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].post('/clients', clientData);
+                await get().fetchClients();
+                return {
+                    success: true,
+                    client: response.client
+                };
+            } catch (error) {
+                set({
+                    error: error.message,
+                    isLoading: false
+                });
+                return {
+                    success: false,
+                    error: error.message
+                };
+            }
         },
-        // Buscar cliente específico
         fetchClient: async (clientId)=>{
             set({
                 isLoading: true,
                 error: null
             });
-            // No futuro: await api.get(`/clients/${clientId}`)
-            await new Promise((resolve)=>setTimeout(resolve, 600));
-            const client = MOCK_CLIENTS.find((c)=>c.id === parseInt(clientId));
-            set({
-                selectedClient: client,
-                isLoading: false
-            });
-            return client;
+            try {
+                const client = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].get(`/clients/${clientId}`);
+                set({
+                    selectedClient: client,
+                    isLoading: false
+                });
+                return client;
+            } catch (error) {
+                set({
+                    error: error.message,
+                    isLoading: false
+                });
+                return null;
+            }
         },
-        // Atualizar cliente
         updateClient: async (clientId, updateData)=>{
             set({
                 isLoading: true,
                 error: null
             });
-            // No futuro: await api.put(`/clients/${clientId}`, updateData)
-            await new Promise((resolve)=>setTimeout(resolve, 1000));
-            const index = MOCK_CLIENTS.findIndex((c)=>c.id === clientId);
-            if (index !== -1) {
-                MOCK_CLIENTS[index] = {
-                    ...MOCK_CLIENTS[index],
-                    ...updateData
+            try {
+                const response = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].put(`/clients/${clientId}`, updateData);
+                await get().fetchClients();
+                return {
+                    success: true,
+                    client: response.client
                 };
+            } catch (error) {
                 set({
-                    clients: [
-                        ...MOCK_CLIENTS
-                    ],
+                    error: error.message,
                     isLoading: false
                 });
                 return {
-                    success: true,
-                    client: MOCK_CLIENTS[index]
+                    success: false,
+                    error: error.message
                 };
             }
-            set({
-                isLoading: false,
-                error: "Cliente não encontrado"
-            });
-            return {
-                success: false,
-                error: "Cliente não encontrado"
-            };
         },
-        // Buscar todos os clientes (retorna array para select)
+        deleteClient: async (clientId)=>{
+            set({
+                isLoading: true,
+                error: null
+            });
+            try {
+                await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].delete(`/clients/${clientId}`);
+                await get().fetchClients();
+                return {
+                    success: true
+                };
+            } catch (error) {
+                set({
+                    error: error.message,
+                    isLoading: false
+                });
+                return {
+                    success: false,
+                    error: error.message
+                };
+            }
+        },
         getAllClients: ()=>{
-            return MOCK_CLIENTS;
+            return get().clients;
         },
         getStats: ()=>{
             return {
-                totalClients: MOCK_CLIENTS.length
+                totalClients: get().clients.length
             };
         }
     }));
@@ -165,363 +142,10 @@ __turbopack_context__.s([
     ()=>useProcessStore
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zustand$2f$esm$2f$react$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/zustand/esm/react.mjs [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/api.js [app-ssr] (ecmascript)");
 "use client";
 ;
-// Dados mockados - No futuro virão da API
-const MOCK_PROCESSES = [
-    {
-        id: 1,
-        clientId: 1,
-        clientName: "Maria Silva Santos",
-        processNumber: "0001234-56.2023.8.02.0001",
-        actionType: "Ação de Indenização por Danos Morais",
-        court: "1ª Vara Cível da Comarca de Ourinhos",
-        plaintiff: "Maria Silva Santos",
-        defendant: "João Carlos Transportes Ltda.",
-        filingDate: "2023-03-15",
-        caseValue: "R$ 50.000,00",
-        subject: "Danos morais decorrentes de acidente de trânsito",
-        description: "Pedido de indenização por danos morais e materiais sofridos em acidente de trânsito causado por veículo da empresa ré",
-        status: "Aguardando perícia",
-        tags: [
-            "Cível"
-        ],
-        priority: "alta",
-        lastUpdate: "2024-10-01",
-        createdAt: "2023-03-15",
-        timeline: [
-            {
-                id: 1,
-                date: "2023-03-15",
-                title: "Processo Distribuído",
-                text: "Processo foi distribuído para a 1ª Vara Cível da Comarca de Ourinhos. Aguardando análise da petição inicial pelo juízo.",
-                type: "official",
-                attachments: [],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2023-03-15T10:30:00"
-            },
-            {
-                id: 2,
-                date: "2023-04-02",
-                title: "Petição Inicial Recebida",
-                text: "A petição inicial foi recebida e deferida pelo juízo. Determinada a citação da parte ré para apresentar contestação no prazo legal de 15 dias.",
-                type: "official",
-                attachments: [
-                    {
-                        id: 1,
-                        name: "despacho_inicial.pdf",
-                        url: "/documents/despacho_inicial.pdf",
-                        type: "application/pdf"
-                    }
-                ],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2023-04-02T14:20:00"
-            },
-            {
-                id: 3,
-                date: "2023-05-10",
-                title: "Contestação Apresentada",
-                text: "A parte ré apresentou contestação refutando os fatos alegados na inicial. Foi solicitada a produção de provas documentais e testemunhais.",
-                type: "official",
-                attachments: [],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2023-05-10T09:15:00"
-            },
-            {
-                id: 4,
-                date: "2023-06-20",
-                title: "Audiência de Conciliação Designada",
-                text: "Foi designada audiência de conciliação para o dia 15/08/2023 às 14h00. Importante sua presença para tentativa de acordo.",
-                type: "official",
-                attachments: [
-                    {
-                        id: 2,
-                        name: "intimacao_audiencia.pdf",
-                        url: "/documents/intimacao_audiencia.pdf",
-                        type: "application/pdf"
-                    }
-                ],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2023-06-20T16:45:00"
-            },
-            {
-                id: 5,
-                date: "2023-08-15",
-                title: "Audiência de Conciliação Realizada",
-                text: "Audiência de conciliação realizada. As partes não chegaram a um acordo. O processo seguirá para a fase de instrução probatória.",
-                type: "official",
-                attachments: [],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2023-08-15T15:30:00"
-            },
-            {
-                id: 6,
-                date: "2024-10-01",
-                title: "Perícia Técnica Deferida",
-                text: "O juízo deferiu a realização de perícia técnica para avaliação dos danos. O perito nomeado entrará em contato para agendar a vistoria.",
-                type: "official",
-                attachments: [
-                    {
-                        id: 3,
-                        name: "despacho_pericia.pdf",
-                        url: "/documents/despacho_pericia.pdf",
-                        type: "application/pdf"
-                    }
-                ],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2024-10-01T11:00:00"
-            }
-        ]
-    },
-    {
-        id: 2,
-        clientId: 1,
-        clientName: "Maria Silva Santos",
-        processNumber: "0007890-12.2024.8.02.0002",
-        actionType: "Revisão de Contrato - Incorporação Imobiliária",
-        court: "3ª Vara Cível da Comarca de Ourinhos",
-        plaintiff: "Maria Silva Santos",
-        defendant: "Construtora Lar Feliz Ltda.",
-        filingDate: "2024-02-10",
-        caseValue: "R$ 250.000,00",
-        subject: "Revisão de cláusulas contratuais abusivas",
-        description: "Ação revisional de cláusulas contratuais abusivas em contrato de compra e venda de imóvel na planta",
-        status: "Em fase de instrução",
-        tags: [
-            "Cível",
-            "Empresarial"
-        ],
-        priority: "media",
-        lastUpdate: "2024-09-28",
-        createdAt: "2024-02-10",
-        timeline: [
-            {
-                id: 1,
-                date: "2024-02-10",
-                title: "Processo Distribuído",
-                text: "Processo distribuído para a 3ª Vara Cível da Comarca de Ourinhos. Petição inicial protocolada com pedido de tutela de urgência.",
-                type: "official",
-                attachments: [],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2024-02-10T09:00:00"
-            },
-            {
-                id: 2,
-                date: "2024-03-05",
-                title: "Tutela de Urgência Deferida",
-                text: "Deferida a tutela de urgência para suspensão das cobranças até decisão final do processo. A construtora foi notificada da decisão.",
-                type: "official",
-                attachments: [
-                    {
-                        id: 4,
-                        name: "decisao_tutela.pdf",
-                        url: "/documents/decisao_tutela.pdf",
-                        type: "application/pdf"
-                    }
-                ],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2024-03-05T13:30:00"
-            },
-            {
-                id: 3,
-                date: "2024-09-28",
-                title: "Juntada de Documentos Complementares",
-                text: "Foram juntados aos autos os documentos complementares solicitados pelo juízo, incluindo extratos bancários e planilha de cálculo dos valores contestados.",
-                type: "official",
-                attachments: [
-                    {
-                        id: 5,
-                        name: "documentos_complementares.pdf",
-                        url: "/documents/documentos_complementares.pdf",
-                        type: "application/pdf"
-                    }
-                ],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2024-09-28T10:15:00"
-            }
-        ]
-    },
-    {
-        id: 3,
-        clientId: 1,
-        clientName: "Maria Silva Santos",
-        processNumber: "0003456-78.2024.8.02.0001",
-        actionType: "Inventário e Partilha de Bens",
-        court: "1º Tabelionato de Notas de Ourinhos",
-        plaintiff: "Maria Silva Santos (Inventariante)",
-        defendant: "N/A",
-        filingDate: "2024-08-01",
-        caseValue: "R$ 800.000,00",
-        subject: "Inventário extrajudicial de bens",
-        description: "Inventário extrajudicial para partilha de bens deixados pelo falecido José Silva Santos",
-        status: "Aguardando documentação",
-        tags: [
-            "Família"
-        ],
-        priority: "baixa",
-        lastUpdate: "2024-09-15",
-        createdAt: "2024-08-01",
-        timeline: [
-            {
-                id: 1,
-                date: "2024-08-01",
-                title: "Processo Iniciado",
-                text: "Processo de inventário iniciado no cartório. Aguardando documentação completa de todos os herdeiros.",
-                type: "official",
-                attachments: [],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2024-08-01T14:00:00"
-            },
-            {
-                id: 2,
-                date: "2024-09-15",
-                title: "Documentação Pendente",
-                text: "Identificamos que ainda faltam os seguintes documentos: certidão de casamento atualizada e documentos pessoais de um dos herdeiros. Por favor, providencie o quanto antes.",
-                type: "comment",
-                attachments: [
-                    {
-                        id: 6,
-                        name: "lista_documentos_pendentes.pdf",
-                        url: "/documents/lista_documentos_pendentes.pdf",
-                        type: "application/pdf"
-                    }
-                ],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2024-09-15T16:20:00"
-            }
-        ]
-    },
-    {
-        id: 4,
-        clientId: 2,
-        clientName: "João Pedro Oliveira",
-        processNumber: "0005678-90.2023.8.02.0003",
-        actionType: "Reclamação Trabalhista - Horas Extras",
-        court: "2ª Vara do Trabalho de Ourinhos",
-        plaintiff: "João Pedro Oliveira",
-        defendant: "Metalúrgica Santos Ltda.",
-        filingDate: "2023-06-20",
-        caseValue: "R$ 35.000,00",
-        subject: "Pagamento de horas extras e adicional noturno",
-        description: "Reclamação trabalhista para pagamento de horas extras não pagas durante o período de vínculo empregatício",
-        status: "Em fase de recurso",
-        tags: [
-            "Trabalhista"
-        ],
-        priority: "urgente",
-        lastUpdate: "2024-09-20",
-        createdAt: "2023-06-20",
-        timeline: [
-            {
-                id: 1,
-                date: "2023-06-20",
-                title: "Reclamação Trabalhista Distribuída",
-                text: "Reclamação trabalhista distribuída na 2ª Vara do Trabalho de Ourinhos. Pedido principal: pagamento de horas extras e adicional noturno.",
-                type: "official",
-                attachments: [],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2023-06-20T11:00:00"
-            },
-            {
-                id: 2,
-                date: "2023-07-15",
-                title: "Audiência Inicial Realizada",
-                text: "Realizada audiência inicial. A empresa apresentou defesa contestando os valores. Processo segue para instrução.",
-                type: "official",
-                attachments: [],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2023-07-15T10:30:00"
-            },
-            {
-                id: 3,
-                date: "2024-03-10",
-                title: "Sentença Publicada - Procedência Parcial",
-                text: "Sentença publicada com procedência parcial dos pedidos. Deferido o pagamento de 70% das horas extras pleiteadas. A empresa foi condenada ao pagamento.",
-                type: "official",
-                attachments: [
-                    {
-                        id: 7,
-                        name: "sentenca.pdf",
-                        url: "/documents/sentenca.pdf",
-                        type: "application/pdf"
-                    }
-                ],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2024-03-10T14:00:00"
-            },
-            {
-                id: 4,
-                date: "2024-09-20",
-                title: "Recurso Ordinário Interposto",
-                text: "A empresa recorrente interpôs recurso ordinário contestando o valor da condenação. Prazo para contrarrazões já foi cumprido. Aguardando julgamento no TRT.",
-                type: "official",
-                attachments: [],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2024-09-20T09:45:00"
-            }
-        ]
-    },
-    {
-        id: 5,
-        clientId: 3,
-        clientName: "Ana Carolina Souza",
-        processNumber: "0002345-67.2024.8.02.0001",
-        actionType: "Divórcio Consensual",
-        court: "1ª Vara de Família da Comarca de Ourinhos",
-        plaintiff: "Ana Carolina Souza",
-        defendant: "Roberto Alves Souza",
-        filingDate: "2024-05-10",
-        caseValue: "R$ 0,00",
-        subject: "Dissolução do vínculo matrimonial e partilha de bens",
-        description: "Processo de divórcio consensual com partilha de bens e acordo sobre guarda dos filhos",
-        status: "Concluído",
-        tags: [
-            "Família"
-        ],
-        priority: "media",
-        lastUpdate: "2024-08-30",
-        createdAt: "2024-05-10",
-        timeline: [
-            {
-                id: 1,
-                date: "2024-05-10",
-                title: "Petição Inicial Protocolada",
-                text: "Petição inicial de divórcio consensual protocolada. Todas as questões já foram acordadas entre as partes.",
-                type: "official",
-                attachments: [],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2024-05-10T10:00:00"
-            },
-            {
-                id: 2,
-                date: "2024-06-20",
-                title: "Audiência de Ratificação Realizada",
-                text: "Realizada audiência onde ambas as partes ratificaram os termos do acordo. Partilha de bens homologada.",
-                type: "official",
-                attachments: [],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2024-06-20T15:00:00"
-            },
-            {
-                id: 3,
-                date: "2024-08-30",
-                title: "Sentença de Divórcio Proferida",
-                text: "Sentença de divórcio proferida e homologada. O processo foi concluído. As certidões já podem ser solicitadas no cartório.",
-                type: "official",
-                attachments: [
-                    {
-                        id: 8,
-                        name: "sentenca_divorcio.pdf",
-                        url: "/documents/sentenca_divorcio.pdf",
-                        type: "application/pdf"
-                    }
-                ],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2024-08-30T11:30:00"
-            }
-        ]
-    }
-];
+;
 const useProcessStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zustand$2f$esm$2f$react$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["create"])((set, get)=>({
         // State
         processes: [],
@@ -536,13 +160,18 @@ const useProcessStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node
                 isLoading: true,
                 error: null
             });
-            // No futuro: await api.get(`/processes/user/${userId}`)
-            await new Promise((resolve)=>setTimeout(resolve, 800));
-            const userProcesses = MOCK_PROCESSES.filter((p)=>p.clientId === userId);
-            set({
-                processes: userProcesses,
-                isLoading: false
-            });
+            try {
+                const response = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].get('/processes/user');
+                set({
+                    processes: response.processes,
+                    isLoading: false
+                });
+            } catch (error) {
+                set({
+                    error: error.message,
+                    isLoading: false
+                });
+            }
         },
         // Actions para ADMINS
         fetchAllProcesses: async ()=>{
@@ -550,12 +179,18 @@ const useProcessStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node
                 isLoading: true,
                 error: null
             });
-            // No futuro: await api.get('/processes')
-            await new Promise((resolve)=>setTimeout(resolve, 800));
-            set({
-                processes: MOCK_PROCESSES,
-                isLoading: false
-            });
+            try {
+                const response = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].get('/processes');
+                set({
+                    processes: response.processes,
+                    isLoading: false
+                });
+            } catch (error) {
+                set({
+                    error: error.message,
+                    isLoading: false
+                });
+            }
         },
         // Buscar processo específico
         fetchProcess: async (processId)=>{
@@ -563,13 +198,18 @@ const useProcessStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node
                 isLoading: true,
                 error: null
             });
-            // No futuro: await api.get(`/processes/${processId}`)
-            await new Promise((resolve)=>setTimeout(resolve, 600));
-            const process = MOCK_PROCESSES.find((p)=>p.id === parseInt(processId));
-            set({
-                selectedProcess: process,
-                isLoading: false
-            });
+            try {
+                const process = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].get(`/processes/${processId}`);
+                set({
+                    selectedProcess: process,
+                    isLoading: false
+                });
+            } catch (error) {
+                set({
+                    error: error.message,
+                    isLoading: false
+                });
+            }
         },
         // Busca (admin)
         search: async (term)=>{
@@ -577,21 +217,25 @@ const useProcessStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node
                 isLoading: true,
                 searchTerm: term
             });
-            // No futuro: await api.get(`/processes/search?q=${term}`)
-            await new Promise((resolve)=>setTimeout(resolve, 500));
-            if (!term || term.trim() === "") {
+            try {
+                if (!term || term.trim() === "") {
+                    set({
+                        searchResults: [],
+                        isLoading: false
+                    });
+                    return;
+                }
+                const response = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].get(`/processes/search?q=${encodeURIComponent(term)}`);
                 set({
-                    searchResults: [],
+                    searchResults: response.processes,
                     isLoading: false
                 });
-                return;
+            } catch (error) {
+                set({
+                    error: error.message,
+                    isLoading: false
+                });
             }
-            const lowerTerm = term.toLowerCase();
-            const results = MOCK_PROCESSES.filter((p)=>p.processNumber.toLowerCase().includes(lowerTerm) || p.actionType.toLowerCase().includes(lowerTerm) || p.description.toLowerCase().includes(lowerTerm) || p.clientName.toLowerCase().includes(lowerTerm) || p.plaintiff.toLowerCase().includes(lowerTerm) || p.defendant.toLowerCase().includes(lowerTerm) || p.court.toLowerCase().includes(lowerTerm) || p.subject.toLowerCase().includes(lowerTerm));
-            set({
-                searchResults: results,
-                isLoading: false
-            });
         },
         clearSearch: ()=>{
             set({
@@ -604,54 +248,55 @@ const useProcessStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node
             set({
                 isLoading: true
             });
-            // No futuro: await api.post(`/processes/${processId}/export-pdf`)
-            await new Promise((resolve)=>setTimeout(resolve, 500));
-            const process = MOCK_PROCESSES.find((p)=>p.id === processId);
-            if (process) {
-                // Gerar conteúdo do relatório no formato do cliente
-                let reportContent = "RELATÓRIO PROCESSUAL\n\n";
-                reportContent += "DADOS DO PROCESSO:\n";
-                reportContent += `Nº do processo: ${process.processNumber}\n`;
-                reportContent += `Juízo: ${process.court}\n`;
-                reportContent += `Cliente: ${process.clientName}\n`;
-                reportContent += `Réu (parte contrária): ${process.defendant}\n`;
-                reportContent += `Data do ajuizamento: ${new Date(process.filingDate).toLocaleDateString("pt-BR")}\n`;
-                reportContent += `Valor da Causa: ${process.caseValue}\n`;
-                reportContent += `Assunto principal do processo: ${process.subject}\n\n`;
-                reportContent += "Andamentos do processo:\n";
-                // Ordenar timeline por data (do mais antigo para o mais novo)
-                const sortedTimeline = [
-                    ...process.timeline
-                ].sort((a, b)=>new Date(a.date) - new Date(b.date));
-                sortedTimeline.forEach((item)=>{
-                    const formattedDate = new Date(item.date).toLocaleDateString("pt-BR", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric"
+            try {
+                const process = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].get(`/processes/${processId}`);
+                if (process) {
+                    let reportContent = "RELATÓRIO PROCESSUAL\n\n";
+                    reportContent += "DADOS DO PROCESSO:\n";
+                    reportContent += `Nº do processo: ${process.processNumber}\n`;
+                    reportContent += `Juízo: ${process.court}\n`;
+                    reportContent += `Cliente: ${process.clientName || 'N/A'}\n`;
+                    reportContent += `Réu (parte contrária): ${process.defendant}\n`;
+                    reportContent += `Data do ajuizamento: ${new Date(process.filingDate).toLocaleDateString("pt-BR")}\n`;
+                    reportContent += `Valor da Causa: ${process.caseValue}\n`;
+                    reportContent += `Assunto principal do processo: ${process.subject}\n\n`;
+                    reportContent += "Andamentos do processo:\n";
+                    const sortedTimeline = [
+                        ...process.timeline || []
+                    ].sort((a, b)=>new Date(a.date) - new Date(b.date));
+                    sortedTimeline.forEach((item)=>{
+                        const formattedDate = new Date(item.date).toLocaleDateString("pt-BR", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric"
+                        });
+                        reportContent += `${formattedDate}: ${item.title}: ${item.text}\n`;
+                        if (item.attachments && item.attachments.length > 0) {
+                            reportContent += `   Anexos: ${item.attachments.map((a)=>a.name).join(", ")}\n`;
+                        }
+                        reportContent += "\n";
                     });
-                    reportContent += `${formattedDate}: ${item.title}: ${item.text}\n`;
-                    if (item.attachments && item.attachments.length > 0) {
-                        reportContent += `   Anexos: ${item.attachments.map((a)=>a.name).join(", ")}\n`;
-                    }
                     reportContent += "\n";
+                    reportContent += `STATUS ATUAL: ${process.status}\n`;
+                    reportContent += `\nRelatório gerado em: ${new Date().toLocaleDateString("pt-BR")} às ${new Date().toLocaleTimeString("pt-BR")}`;
+                    const blob = new Blob([
+                        reportContent
+                    ], {
+                        type: "text/plain;charset=utf-8"
+                    });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `Relatorio_Processual_${process.processNumber.replace(/[^\d]/g, "")}.txt`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                }
+            } catch (error) {
+                set({
+                    error: error.message
                 });
-                reportContent += "\n";
-                reportContent += `STATUS ATUAL: ${process.status}\n`;
-                reportContent += `\nRelatório gerado em: ${new Date().toLocaleDateString("pt-BR")} às ${new Date().toLocaleTimeString("pt-BR")}`;
-                // Criar e fazer download do arquivo
-                const blob = new Blob([
-                    reportContent
-                ], {
-                    type: "text/plain;charset=utf-8"
-                });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = `Relatorio_Processual_${process.processNumber.replace(/[^\d]/g, "")}.txt`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
             }
             set({
                 isLoading: false
@@ -663,36 +308,23 @@ const useProcessStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node
                 isLoading: true,
                 error: null
             });
-            // No futuro: await api.post('/processes', processData)
-            await new Promise((resolve)=>setTimeout(resolve, 1000));
-            const newProcess = {
-                id: MOCK_PROCESSES.length + 1,
-                ...processData,
-                createdAt: new Date().toISOString().split("T")[0],
-                lastUpdate: new Date().toISOString().split("T")[0],
-                timeline: [
-                    {
-                        id: 1,
-                        date: new Date().toISOString().split("T")[0],
-                        title: "Processo Criado",
-                        text: "Processo cadastrado no sistema.",
-                        attachments: [],
-                        createdBy: "Sistema",
-                        createdAt: new Date().toISOString()
-                    }
-                ]
-            };
-            MOCK_PROCESSES.push(newProcess);
-            set({
-                processes: [
-                    ...MOCK_PROCESSES
-                ],
-                isLoading: false
-            });
-            return {
-                success: true,
-                process: newProcess
-            };
+            try {
+                const response = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].post('/processes', processData);
+                await get().fetchAllProcesses();
+                return {
+                    success: true,
+                    process: response.process
+                };
+            } catch (error) {
+                set({
+                    error: error.message,
+                    isLoading: false
+                });
+                return {
+                    success: false,
+                    error: error.message
+                };
+            }
         },
         // Atualizar processo (admin)
         updateProcess: async (processId, updateData)=>{
@@ -700,38 +332,55 @@ const useProcessStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node
                 isLoading: true,
                 error: null
             });
-            // No futuro: await api.put(`/processes/${processId}`, updateData)
-            await new Promise((resolve)=>setTimeout(resolve, 1000));
-            const index = MOCK_PROCESSES.findIndex((p)=>p.id === processId);
-            if (index !== -1) {
-                MOCK_PROCESSES[index] = {
-                    ...MOCK_PROCESSES[index],
-                    ...updateData,
-                    lastUpdate: new Date().toISOString().split("T")[0]
+            try {
+                const response = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].put(`/processes/${processId}`, updateData);
+                await get().fetchAllProcesses();
+                if (get().selectedProcess?._id === processId) {
+                    set({
+                        selectedProcess: response.process
+                    });
+                }
+                return {
+                    success: true,
+                    process: response.process
                 };
+            } catch (error) {
                 set({
-                    processes: [
-                        ...MOCK_PROCESSES
-                    ],
+                    error: error.message,
                     isLoading: false
                 });
                 return {
-                    success: true,
-                    process: MOCK_PROCESSES[index]
+                    success: false,
+                    error: error.message
                 };
             }
+        },
+        // Deletar processo (admin)
+        deleteProcess: async (processId)=>{
             set({
-                isLoading: false,
-                error: "Processo não encontrado"
+                isLoading: true,
+                error: null
             });
-            return {
-                success: false,
-                error: "Processo não encontrado"
-            };
+            try {
+                await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].delete(`/processes/${processId}`);
+                await get().fetchAllProcesses();
+                return {
+                    success: true
+                };
+            } catch (error) {
+                set({
+                    error: error.message,
+                    isLoading: false
+                });
+                return {
+                    success: false,
+                    error: error.message
+                };
+            }
         },
         // Buscar processos por cliente
         getProcessesByClient: (clientId)=>{
-            return MOCK_PROCESSES.filter((p)=>p.clientId === clientId);
+            return get().processes.filter((p)=>p.clientId === clientId || p.clientId?._id === clientId);
         },
         // Adicionar andamento a um processo
         addTimeline: async (processId, timelineData)=>{
@@ -739,42 +388,23 @@ const useProcessStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node
                 isLoading: true,
                 error: null
             });
-            // No futuro: await api.post(`/processes/${processId}/timeline`, timelineData)
-            await new Promise((resolve)=>setTimeout(resolve, 800));
-            const process = MOCK_PROCESSES.find((p)=>p.id === processId);
-            if (process) {
-                const newTimeline = {
-                    id: process.timeline.length + 1,
-                    ...timelineData,
-                    date: timelineData.date || new Date().toISOString().split("T")[0],
-                    createdAt: new Date().toISOString(),
-                    attachments: timelineData.attachments || [],
-                    type: timelineData.type || "official"
+            try {
+                const response = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].post(`/processes/${processId}/timeline`, timelineData);
+                await get().fetchProcess(processId);
+                return {
+                    success: true,
+                    timeline: response.timeline
                 };
-                process.timeline.push(newTimeline);
-                process.lastUpdate = new Date().toISOString().split("T")[0];
+            } catch (error) {
                 set({
-                    selectedProcess: {
-                        ...process
-                    },
-                    processes: [
-                        ...MOCK_PROCESSES
-                    ],
+                    error: error.message,
                     isLoading: false
                 });
                 return {
-                    success: true,
-                    timeline: newTimeline
+                    success: false,
+                    error: error.message
                 };
             }
-            set({
-                isLoading: false,
-                error: "Processo não encontrado"
-            });
-            return {
-                success: false,
-                error: "Processo não encontrado"
-            };
         },
         // Deletar andamento de um processo
         deleteTimeline: async (processId, timelineId)=>{
@@ -782,44 +412,22 @@ const useProcessStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node
                 isLoading: true,
                 error: null
             });
-            // No futuro: await api.delete(`/processes/${processId}/timeline/${timelineId}`)
-            await new Promise((resolve)=>setTimeout(resolve, 500));
-            const process = MOCK_PROCESSES.find((p)=>p.id === processId);
-            if (process) {
-                const timelineIndex = process.timeline.findIndex((t)=>t.id === timelineId);
-                if (timelineIndex !== -1) {
-                    process.timeline.splice(timelineIndex, 1);
-                    process.lastUpdate = new Date().toISOString().split("T")[0];
-                    set({
-                        selectedProcess: {
-                            ...process
-                        },
-                        processes: [
-                            ...MOCK_PROCESSES
-                        ],
-                        isLoading: false
-                    });
-                    return {
-                        success: true
-                    };
-                }
+            try {
+                await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].delete(`/processes/${processId}/timeline/${timelineId}`);
+                await get().fetchProcess(processId);
+                return {
+                    success: true
+                };
+            } catch (error) {
                 set({
-                    isLoading: false,
-                    error: "Andamento não encontrado"
+                    error: error.message,
+                    isLoading: false
                 });
                 return {
                     success: false,
-                    error: "Andamento não encontrado"
+                    error: error.message
                 };
             }
-            set({
-                isLoading: false,
-                error: "Processo não encontrado"
-            });
-            return {
-                success: false,
-                error: "Processo não encontrado"
-            };
         },
         // Atualizar andamento de um processo
         updateTimeline: async (processId, timelineId, timelineData)=>{
@@ -827,57 +435,36 @@ const useProcessStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node
                 isLoading: true,
                 error: null
             });
-            // No futuro: await api.put(`/processes/${processId}/timeline/${timelineId}`, timelineData)
-            await new Promise((resolve)=>setTimeout(resolve, 500));
-            const process = MOCK_PROCESSES.find((p)=>p.id === processId);
-            if (process) {
-                const timelineIndex = process.timeline.findIndex((t)=>t.id === timelineId);
-                if (timelineIndex !== -1) {
-                    process.timeline[timelineIndex] = {
-                        ...process.timeline[timelineIndex],
-                        ...timelineData
-                    };
-                    process.lastUpdate = new Date().toISOString().split("T")[0];
-                    set({
-                        selectedProcess: {
-                            ...process
-                        },
-                        processes: [
-                            ...MOCK_PROCESSES
-                        ],
-                        isLoading: false
-                    });
-                    return {
-                        success: true,
-                        timeline: process.timeline[timelineIndex]
-                    };
-                }
+            try {
+                const response = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].put(`/processes/${processId}/timeline/${timelineId}`, timelineData);
+                await get().fetchProcess(processId);
+                return {
+                    success: true,
+                    timeline: response.timeline
+                };
+            } catch (error) {
                 set({
-                    isLoading: false,
-                    error: "Andamento não encontrado"
+                    error: error.message,
+                    isLoading: false
                 });
                 return {
                     success: false,
-                    error: "Andamento não encontrado"
+                    error: error.message
                 };
             }
-            set({
-                isLoading: false,
-                error: "Processo não encontrado"
-            });
-            return {
-                success: false,
-                error: "Processo não encontrado"
-            };
         },
         // Stats (admin)
-        getStats: ()=>{
-            const all = MOCK_PROCESSES;
-            return {
-                totalProcesses: all.length,
-                activeProcesses: all.filter((p)=>p.status !== "Concluído").length,
-                completedProcesses: all.filter((p)=>p.status === "Concluído").length
-            };
+        getStats: async ()=>{
+            try {
+                const stats = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].get('/processes/stats');
+                return stats;
+            } catch (error) {
+                return {
+                    totalProcesses: 0,
+                    activeProcesses: 0,
+                    completedProcesses: 0
+                };
+            }
         }
     }));
 }),
@@ -1392,9 +979,9 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 ;
 const ClientesPage = ()=>{
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRouter"])();
-    const { isAuthenticated, isAdmin } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$store$2f$auth$2d$store$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useAuthStore"])();
+    const { isAdmin, user } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$store$2f$auth$2d$store$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useAuthStore"])();
     const { clients, fetchClients, addClient, updateClient, isLoading } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$store$2f$client$2d$store$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useClientStore"])();
-    const { getProcessesByClient } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$store$2f$process$2d$store$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useProcessStore"])();
+    const { processes, fetchAllProcesses, getProcessesByClient } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$store$2f$process$2d$store$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useProcessStore"])();
     // Estados para Dialog de Novo Cliente
     const [openNewClient, setOpenNewClient] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [formData, setFormData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])({
@@ -1416,16 +1003,15 @@ const ClientesPage = ()=>{
         phone: ""
     });
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
-        if (!isAuthenticated) {
-            router.push("/login");
-        } else if (!isAdmin()) {
-            router.push("/dashboard");
-        } else {
+        if (user && isAdmin()) {
             fetchClients();
+            fetchAllProcesses();
         }
     }, [
-        isAuthenticated,
-        isAdmin
+        user,
+        isAdmin,
+        fetchClients,
+        fetchAllProcesses
     ]);
     const handleSubmit = async (e)=>{
         e.preventDefault();
@@ -1448,7 +1034,8 @@ const ClientesPage = ()=>{
     };
     const handleViewProcesses = (client)=>{
         setSelectedClient(client);
-        const processes = getProcessesByClient(client.id);
+        const clientId = client._id || client.id;
+        const processes = getProcessesByClient(clientId);
         setClientProcesses(processes);
         setOpenViewProcesses(true);
     };
@@ -1465,7 +1052,8 @@ const ClientesPage = ()=>{
     const handleUpdateSubmit = async (e)=>{
         e.preventDefault();
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["toast"].loading("Salvando alterações...");
-        const result = await updateClient(selectedClient.id, editFormData);
+        const clientId = selectedClient._id || selectedClient.id;
+        const result = await updateClient(clientId, editFormData);
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["toast"].dismiss();
         if (result.success) {
             __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["toast"].success("Cliente atualizado com sucesso!");
@@ -1488,7 +1076,7 @@ const ClientesPage = ()=>{
                                 children: "Clientes"
                             }, void 0, false, {
                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                lineNumber: 118,
+                                lineNumber: 117,
                                 columnNumber: 6
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1496,13 +1084,13 @@ const ClientesPage = ()=>{
                                 children: "Gerencie todos os clientes cadastrados"
                             }, void 0, false, {
                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                lineNumber: 119,
+                                lineNumber: 118,
                                 columnNumber: 6
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                        lineNumber: 117,
+                        lineNumber: 116,
                         columnNumber: 5
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dialog$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Dialog"], {
@@ -1517,19 +1105,19 @@ const ClientesPage = ()=>{
                                             className: "h-4 w-4"
                                         }, void 0, false, {
                                             fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                            lineNumber: 128,
+                                            lineNumber: 127,
                                             columnNumber: 8
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         "Novo Cliente"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                    lineNumber: 127,
+                                    lineNumber: 126,
                                     columnNumber: 7
                                 }, ("TURBOPACK compile-time value", void 0))
                             }, void 0, false, {
                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                lineNumber: 126,
+                                lineNumber: 125,
                                 columnNumber: 6
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dialog$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["DialogContent"], {
@@ -1541,20 +1129,20 @@ const ClientesPage = ()=>{
                                                 children: "Cadastrar Novo Cliente"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                lineNumber: 134,
+                                                lineNumber: 133,
                                                 columnNumber: 8
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dialog$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["DialogDescription"], {
                                                 children: "Preencha as informações do cliente para cadastrá-lo no sistema"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                lineNumber: 135,
+                                                lineNumber: 134,
                                                 columnNumber: 8
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                        lineNumber: 133,
+                                        lineNumber: 132,
                                         columnNumber: 7
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -1574,7 +1162,7 @@ const ClientesPage = ()=>{
                                                                         children: "Nome Completo *"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                        lineNumber: 143,
+                                                                        lineNumber: 142,
                                                                         columnNumber: 11
                                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -1588,13 +1176,13 @@ const ClientesPage = ()=>{
                                                                         required: true
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                        lineNumber: 144,
+                                                                        lineNumber: 143,
                                                                         columnNumber: 11
                                                                     }, ("TURBOPACK compile-time value", void 0))
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                lineNumber: 142,
+                                                                lineNumber: 141,
                                                                 columnNumber: 10
                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1605,7 +1193,7 @@ const ClientesPage = ()=>{
                                                                         children: "Email *"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                        lineNumber: 155,
+                                                                        lineNumber: 154,
                                                                         columnNumber: 11
                                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -1620,19 +1208,19 @@ const ClientesPage = ()=>{
                                                                         required: true
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                        lineNumber: 156,
+                                                                        lineNumber: 155,
                                                                         columnNumber: 11
                                                                     }, ("TURBOPACK compile-time value", void 0))
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                lineNumber: 154,
+                                                                lineNumber: 153,
                                                                 columnNumber: 10
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                        lineNumber: 141,
+                                                        lineNumber: 140,
                                                         columnNumber: 9
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1646,7 +1234,7 @@ const ClientesPage = ()=>{
                                                                         children: "CPF *"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                        lineNumber: 170,
+                                                                        lineNumber: 169,
                                                                         columnNumber: 11
                                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -1660,13 +1248,13 @@ const ClientesPage = ()=>{
                                                                         required: true
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                        lineNumber: 171,
+                                                                        lineNumber: 170,
                                                                         columnNumber: 11
                                                                     }, ("TURBOPACK compile-time value", void 0))
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                lineNumber: 169,
+                                                                lineNumber: 168,
                                                                 columnNumber: 10
                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1677,7 +1265,7 @@ const ClientesPage = ()=>{
                                                                         children: "Telefone *"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                        lineNumber: 182,
+                                                                        lineNumber: 181,
                                                                         columnNumber: 11
                                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -1691,25 +1279,25 @@ const ClientesPage = ()=>{
                                                                         required: true
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                        lineNumber: 183,
+                                                                        lineNumber: 182,
                                                                         columnNumber: 11
                                                                     }, ("TURBOPACK compile-time value", void 0))
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                lineNumber: 181,
+                                                                lineNumber: 180,
                                                                 columnNumber: 10
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                        lineNumber: 168,
+                                                        lineNumber: 167,
                                                         columnNumber: 9
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                lineNumber: 140,
+                                                lineNumber: 139,
                                                 columnNumber: 8
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dialog$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["DialogFooter"], {
@@ -1721,7 +1309,7 @@ const ClientesPage = ()=>{
                                                         children: "Cancelar"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                        lineNumber: 196,
+                                                        lineNumber: 195,
                                                         columnNumber: 9
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -1730,42 +1318,44 @@ const ClientesPage = ()=>{
                                                         children: isLoading ? "Salvando..." : "Cadastrar Cliente"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                        lineNumber: 203,
+                                                        lineNumber: 202,
                                                         columnNumber: 9
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                lineNumber: 195,
+                                                lineNumber: 194,
                                                 columnNumber: 8
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                        lineNumber: 139,
+                                        lineNumber: 138,
                                         columnNumber: 7
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                lineNumber: 132,
+                                lineNumber: 131,
                                 columnNumber: 6
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                        lineNumber: 125,
+                        lineNumber: 124,
                         columnNumber: 5
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                lineNumber: 116,
+                lineNumber: 115,
                 columnNumber: 4
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "grid gap-4",
-                children: clients.map((client)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
+                children: clients.map((client)=>{
+                    const clientId = client._id || client.id;
+                    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
                         className: "hover:shadow-md transition-shadow",
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardHeader"], {
                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1779,7 +1369,7 @@ const ClientesPage = ()=>{
                                                 children: client.name
                                             }, void 0, false, {
                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                lineNumber: 218,
+                                                lineNumber: 219,
                                                 columnNumber: 10
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1792,20 +1382,20 @@ const ClientesPage = ()=>{
                                                                 className: "h-4 w-4"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                lineNumber: 221,
+                                                                lineNumber: 222,
                                                                 columnNumber: 12
                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                 children: client.email
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                lineNumber: 222,
+                                                                lineNumber: 223,
                                                                 columnNumber: 12
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                        lineNumber: 220,
+                                                        lineNumber: 221,
                                                         columnNumber: 11
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1815,20 +1405,20 @@ const ClientesPage = ()=>{
                                                                 className: "h-4 w-4"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                lineNumber: 225,
+                                                                lineNumber: 226,
                                                                 columnNumber: 12
                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                 children: client.phone
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                lineNumber: 226,
+                                                                lineNumber: 227,
                                                                 columnNumber: 12
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                        lineNumber: 224,
+                                                        lineNumber: 225,
                                                         columnNumber: 11
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1838,20 +1428,20 @@ const ClientesPage = ()=>{
                                                                 className: "h-4 w-4"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                lineNumber: 229,
+                                                                lineNumber: 230,
                                                                 columnNumber: 12
                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                 children: client.cpf
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                lineNumber: 230,
+                                                                lineNumber: 231,
                                                                 columnNumber: 12
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                        lineNumber: 228,
+                                                        lineNumber: 229,
                                                         columnNumber: 11
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1861,36 +1451,36 @@ const ClientesPage = ()=>{
                                                                 className: "h-4 w-4"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                lineNumber: 233,
+                                                                lineNumber: 234,
                                                                 columnNumber: 12
                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                 children: [
-                                                                    getProcessesByClient(client.id).length,
+                                                                    getProcessesByClient(clientId).length,
                                                                     " processo",
-                                                                    getProcessesByClient(client.id).length !== 1 ? "s" : ""
+                                                                    getProcessesByClient(clientId).length !== 1 ? "s" : ""
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                lineNumber: 234,
+                                                                lineNumber: 235,
                                                                 columnNumber: 12
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                        lineNumber: 232,
+                                                        lineNumber: 233,
                                                         columnNumber: 11
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                lineNumber: 219,
+                                                lineNumber: 220,
                                                 columnNumber: 10
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                        lineNumber: 217,
+                                        lineNumber: 218,
                                         columnNumber: 9
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1905,14 +1495,14 @@ const ClientesPage = ()=>{
                                                         className: "h-4 w-4 mr-1"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                        lineNumber: 247,
+                                                        lineNumber: 248,
                                                         columnNumber: 11
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     "Editar"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                lineNumber: 242,
+                                                lineNumber: 243,
                                                 columnNumber: 10
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -1924,41 +1514,42 @@ const ClientesPage = ()=>{
                                                         className: "h-4 w-4 mr-1"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                        lineNumber: 255,
+                                                        lineNumber: 256,
                                                         columnNumber: 11
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     "Ver Processos"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                lineNumber: 250,
+                                                lineNumber: 251,
                                                 columnNumber: 10
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                        lineNumber: 241,
+                                        lineNumber: 242,
                                         columnNumber: 9
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                lineNumber: 216,
+                                lineNumber: 217,
                                 columnNumber: 8
                             }, ("TURBOPACK compile-time value", void 0))
                         }, void 0, false, {
                             fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                            lineNumber: 215,
+                            lineNumber: 216,
                             columnNumber: 7
                         }, ("TURBOPACK compile-time value", void 0))
-                    }, client.id, false, {
+                    }, clientId, false, {
                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                        lineNumber: 214,
+                        lineNumber: 215,
                         columnNumber: 6
-                    }, ("TURBOPACK compile-time value", void 0)))
+                    }, ("TURBOPACK compile-time value", void 0));
+                })
             }, void 0, false, {
                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                lineNumber: 212,
+                lineNumber: 211,
                 columnNumber: 4
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dialog$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Dialog"], {
@@ -1973,20 +1564,20 @@ const ClientesPage = ()=>{
                                     children: "Editar Cliente"
                                 }, void 0, false, {
                                     fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                    lineNumber: 269,
+                                    lineNumber: 271,
                                     columnNumber: 7
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dialog$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["DialogDescription"], {
                                     children: "Atualize as informações do cliente"
                                 }, void 0, false, {
                                     fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                    lineNumber: 270,
+                                    lineNumber: 272,
                                     columnNumber: 7
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                            lineNumber: 268,
+                            lineNumber: 270,
                             columnNumber: 6
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -2006,7 +1597,7 @@ const ClientesPage = ()=>{
                                                             children: "Nome Completo *"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                            lineNumber: 278,
+                                                            lineNumber: 280,
                                                             columnNumber: 10
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -2020,13 +1611,13 @@ const ClientesPage = ()=>{
                                                             required: true
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                            lineNumber: 279,
+                                                            lineNumber: 281,
                                                             columnNumber: 10
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                    lineNumber: 277,
+                                                    lineNumber: 279,
                                                     columnNumber: 9
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2037,7 +1628,7 @@ const ClientesPage = ()=>{
                                                             children: "Email *"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                            lineNumber: 290,
+                                                            lineNumber: 292,
                                                             columnNumber: 10
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -2052,19 +1643,19 @@ const ClientesPage = ()=>{
                                                             required: true
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                            lineNumber: 291,
+                                                            lineNumber: 293,
                                                             columnNumber: 10
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                    lineNumber: 289,
+                                                    lineNumber: 291,
                                                     columnNumber: 9
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                            lineNumber: 276,
+                                            lineNumber: 278,
                                             columnNumber: 8
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2078,7 +1669,7 @@ const ClientesPage = ()=>{
                                                             children: "CPF *"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                            lineNumber: 305,
+                                                            lineNumber: 307,
                                                             columnNumber: 10
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -2092,13 +1683,13 @@ const ClientesPage = ()=>{
                                                             required: true
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                            lineNumber: 306,
+                                                            lineNumber: 308,
                                                             columnNumber: 10
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                    lineNumber: 304,
+                                                    lineNumber: 306,
                                                     columnNumber: 9
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2109,7 +1700,7 @@ const ClientesPage = ()=>{
                                                             children: "Telefone *"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                            lineNumber: 317,
+                                                            lineNumber: 319,
                                                             columnNumber: 10
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -2123,25 +1714,25 @@ const ClientesPage = ()=>{
                                                             required: true
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                            lineNumber: 318,
+                                                            lineNumber: 320,
                                                             columnNumber: 10
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                    lineNumber: 316,
+                                                    lineNumber: 318,
                                                     columnNumber: 9
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                            lineNumber: 303,
+                                            lineNumber: 305,
                                             columnNumber: 8
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                    lineNumber: 275,
+                                    lineNumber: 277,
                                     columnNumber: 7
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dialog$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["DialogFooter"], {
@@ -2153,7 +1744,7 @@ const ClientesPage = ()=>{
                                             children: "Cancelar"
                                         }, void 0, false, {
                                             fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                            lineNumber: 331,
+                                            lineNumber: 333,
                                             columnNumber: 8
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -2162,30 +1753,30 @@ const ClientesPage = ()=>{
                                             children: isLoading ? "Salvando..." : "Salvar Alterações"
                                         }, void 0, false, {
                                             fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                            lineNumber: 338,
+                                            lineNumber: 340,
                                             columnNumber: 8
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                    lineNumber: 330,
+                                    lineNumber: 332,
                                     columnNumber: 7
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                            lineNumber: 274,
+                            lineNumber: 276,
                             columnNumber: 6
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                    lineNumber: 267,
+                    lineNumber: 269,
                     columnNumber: 5
                 }, ("TURBOPACK compile-time value", void 0))
             }, void 0, false, {
                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                lineNumber: 266,
+                lineNumber: 268,
                 columnNumber: 4
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dialog$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Dialog"], {
@@ -2200,7 +1791,7 @@ const ClientesPage = ()=>{
                                     children: "Processos do Cliente"
                                 }, void 0, false, {
                                     fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                    lineNumber: 350,
+                                    lineNumber: 352,
                                     columnNumber: 7
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dialog$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["DialogDescription"], {
@@ -2211,13 +1802,13 @@ const ClientesPage = ()=>{
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                    lineNumber: 351,
+                                    lineNumber: 353,
                                     columnNumber: 7
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                            lineNumber: 349,
+                            lineNumber: 351,
                             columnNumber: 6
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$scroll$2d$area$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ScrollArea"], {
@@ -2229,7 +1820,7 @@ const ClientesPage = ()=>{
                                         className: "h-16 w-16 text-muted-foreground mb-4"
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                        lineNumber: 359,
+                                        lineNumber: 361,
                                         columnNumber: 9
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2237,7 +1828,7 @@ const ClientesPage = ()=>{
                                         children: "Nenhum processo encontrado"
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                        lineNumber: 360,
+                                        lineNumber: 362,
                                         columnNumber: 9
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2245,13 +1836,13 @@ const ClientesPage = ()=>{
                                         children: "Este cliente ainda não possui processos cadastrados no sistema."
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                        lineNumber: 363,
+                                        lineNumber: 365,
                                         columnNumber: 9
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                lineNumber: 358,
+                                lineNumber: 360,
                                 columnNumber: 8
                             }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "space-y-4 py-4",
@@ -2271,7 +1862,7 @@ const ClientesPage = ()=>{
                                                                         children: process.title
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                        lineNumber: 375,
+                                                                        lineNumber: 377,
                                                                         columnNumber: 15
                                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardDescription"], {
@@ -2279,13 +1870,13 @@ const ClientesPage = ()=>{
                                                                         children: process.description
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                        lineNumber: 378,
+                                                                        lineNumber: 380,
                                                                         columnNumber: 15
                                                                     }, ("TURBOPACK compile-time value", void 0))
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                lineNumber: 374,
+                                                                lineNumber: 376,
                                                                 columnNumber: 14
                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2298,20 +1889,20 @@ const ClientesPage = ()=>{
                                                                                 className: "h-4 w-4"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                                lineNumber: 385,
+                                                                                lineNumber: 387,
                                                                                 columnNumber: 16
                                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                                 children: process.processNumber
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                                lineNumber: 386,
+                                                                                lineNumber: 388,
                                                                                 columnNumber: 16
                                                                             }, ("TURBOPACK compile-time value", void 0))
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                        lineNumber: 384,
+                                                                        lineNumber: 386,
                                                                         columnNumber: 15
                                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2321,7 +1912,7 @@ const ClientesPage = ()=>{
                                                                                 className: "h-4 w-4"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                                lineNumber: 389,
+                                                                                lineNumber: 391,
                                                                                 columnNumber: 16
                                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2332,19 +1923,19 @@ const ClientesPage = ()=>{
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                                lineNumber: 390,
+                                                                                lineNumber: 392,
                                                                                 columnNumber: 16
                                                                             }, ("TURBOPACK compile-time value", void 0))
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                        lineNumber: 388,
+                                                                        lineNumber: 390,
                                                                         columnNumber: 15
                                                                     }, ("TURBOPACK compile-time value", void 0))
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                lineNumber: 383,
+                                                                lineNumber: 385,
                                                                 columnNumber: 14
                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                             process.timeline && process.timeline.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2355,7 +1946,7 @@ const ClientesPage = ()=>{
                                                                         children: "Último Andamento:"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                        lineNumber: 402,
+                                                                        lineNumber: 404,
                                                                         columnNumber: 16
                                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2365,7 +1956,7 @@ const ClientesPage = ()=>{
                                                                                 children: process.timeline[process.timeline.length - 1].title
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                                lineNumber: 406,
+                                                                                lineNumber: 408,
                                                                                 columnNumber: 17
                                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2379,25 +1970,25 @@ const ClientesPage = ()=>{
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                                lineNumber: 412,
+                                                                                lineNumber: 414,
                                                                                 columnNumber: 17
                                                                             }, ("TURBOPACK compile-time value", void 0))
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                        lineNumber: 405,
+                                                                        lineNumber: 407,
                                                                         columnNumber: 16
                                                                     }, ("TURBOPACK compile-time value", void 0))
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                lineNumber: 401,
+                                                                lineNumber: 403,
                                                                 columnNumber: 15
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                        lineNumber: 373,
+                                                        lineNumber: 375,
                                                         columnNumber: 13
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2408,7 +1999,7 @@ const ClientesPage = ()=>{
                                                                 children: process.status
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                lineNumber: 428,
+                                                                lineNumber: 430,
                                                                 columnNumber: 14
                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2419,39 +2010,39 @@ const ClientesPage = ()=>{
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                                lineNumber: 439,
+                                                                lineNumber: 441,
                                                                 columnNumber: 14
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                        lineNumber: 427,
+                                                        lineNumber: 429,
                                                         columnNumber: 13
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                                lineNumber: 372,
+                                                lineNumber: 374,
                                                 columnNumber: 12
                                             }, ("TURBOPACK compile-time value", void 0))
                                         }, void 0, false, {
                                             fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                            lineNumber: 371,
+                                            lineNumber: 373,
                                             columnNumber: 11
                                         }, ("TURBOPACK compile-time value", void 0))
                                     }, process.id, false, {
                                         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                        lineNumber: 370,
+                                        lineNumber: 372,
                                         columnNumber: 10
                                     }, ("TURBOPACK compile-time value", void 0)))
                             }, void 0, false, {
                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                lineNumber: 368,
+                                lineNumber: 370,
                                 columnNumber: 8
                             }, ("TURBOPACK compile-time value", void 0))
                         }, void 0, false, {
                             fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                            lineNumber: 356,
+                            lineNumber: 358,
                             columnNumber: 6
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dialog$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["DialogFooter"], {
@@ -2461,29 +2052,29 @@ const ClientesPage = ()=>{
                                 children: "Fechar"
                             }, void 0, false, {
                                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                                lineNumber: 452,
+                                lineNumber: 454,
                                 columnNumber: 7
                             }, ("TURBOPACK compile-time value", void 0))
                         }, void 0, false, {
                             fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                            lineNumber: 451,
+                            lineNumber: 453,
                             columnNumber: 6
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                    lineNumber: 348,
+                    lineNumber: 350,
                     columnNumber: 5
                 }, ("TURBOPACK compile-time value", void 0))
             }, void 0, false, {
                 fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-                lineNumber: 347,
+                lineNumber: 349,
                 columnNumber: 4
             }, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true, {
         fileName: "[project]/app/admin/dashboard/clientes/page.jsx",
-        lineNumber: 115,
+        lineNumber: 114,
         columnNumber: 3
     }, ("TURBOPACK compile-time value", void 0));
 };

@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth-store";
 import { useProcessStore } from "@/store/process-store";
 import { useClientStore } from "@/store/client-store";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Users, FileText, CheckCircle, Clock, TrendingUp, AlertTriangle } from "lucide-react";
+import ProcessViewDialog from "@/components/process/ProcessViewDialog";
 import {
 	BarChart,
 	Bar,
@@ -25,39 +26,87 @@ import {
 
 const AdminDashboard = () => {
 	const router = useRouter();
-	const { isAuthenticated, isAdmin } = useAuthStore();
-	const { processes, fetchAllProcesses, getStats } = useProcessStore();
+	const { isAdmin, user } = useAuthStore();
+	const { processes, fetchAllProcesses, getStats, fetchProcess } = useProcessStore();
 	const { getStats: getClientStats } = useClientStore();
+	const [openViewDialog, setOpenViewDialog] = useState(false);
+	const [selectedProcess, setSelectedProcess] = useState(null);
 
 	useEffect(() => {
-		if (!isAuthenticated) {
-			router.push("/login");
-		} else if (!isAdmin()) {
-			router.push("/dashboard");
-		} else {
+		if (user && isAdmin()) {
 			fetchAllProcesses();
 		}
-	}, [isAuthenticated, isAdmin]);
+	}, [user, isAdmin, fetchAllProcesses]);
 
-	const processStats = getStats();
-	const clientStats = getClientStats();
+	const [processStats, setProcessStats] = useState({ 
+		totalProcesses: 0, 
+		activeProcesses: 0, 
+		completedProcesses: 0,
+		processesThisMonth: 0,
+		processesLastMonth: 0,
+		completionRate: 0,
+		monthlyData: [],
+	});
+	const [clientStats, setClientStats] = useState({
+		totalClients: 0,
+		clientsThisMonth: 0,
+		clientsLastMonth: 0,
+	});
+
+	useEffect(() => {
+		const loadStats = async () => {
+			const stats = await getStats();
+			setProcessStats(stats);
+		};
+		if (user && isAdmin()) {
+			loadStats();
+		}
+	}, [user, isAdmin, getStats]);
+
+	useEffect(() => {
+		const loadClientStats = async () => {
+			const stats = await getClientStats();
+			setClientStats(stats);
+		};
+		if (user && isAdmin()) {
+			loadClientStats();
+		}
+	}, [user, isAdmin, getClientStats]);
 
 	// Dados para gráficos
-	const statusData = [
-		{ status: "Em andamento", count: processes.filter(p => p.status === "Em andamento").length, fill: "#3b82f6" },
-		{ status: "Aguardando doc", count: processes.filter(p => p.status === "Aguardando documentação").length, fill: "#eab308" },
-		{ status: "Em recurso", count: processes.filter(p => p.status === "Em fase de recurso").length, fill: "#a855f7" },
-		{ status: "Concluído", count: processes.filter(p => p.status === "Concluído").length, fill: "#22c55e" },
-	];
+	// Agrupar todos os status dos processos
+	const statusCounts = processes.reduce((acc, process) => {
+		const status = process.status || "Sem status";
+		acc[status] = (acc[status] || 0) + 1;
+		return acc;
+	}, {});
 
-	const monthlyData = [
-		{ month: "Mai", processos: 1 },
-		{ month: "Jun", processos: 1 },
-		{ month: "Jul", processos: 0 },
-		{ month: "Ago", processos: 2 },
-		{ month: "Set", processos: 0 },
-		{ month: "Out", processos: 1 },
-	];
+	// Criar dados para o gráfico de status (top 6 status mais comuns)
+	const statusData = Object.entries(statusCounts)
+		.map(([status, count]) => {
+			// Mapear cores para status comuns
+			const colorMap = {
+				"Concluído": "#22c55e",
+				"Arquivado": "#6b7280",
+				"Em fase de recurso": "#a855f7",
+				"Aguardando documentação": "#eab308",
+				"Em fase de instrução": "#3b82f6",
+				"Distribuído": "#3b82f6",
+				"Aguardando análise inicial": "#3b82f6",
+			};
+			return {
+				status: status.length > 15 ? status.substring(0, 15) + "..." : status,
+				count,
+				fill: colorMap[status] || "#8b5cf6",
+			};
+		})
+		.sort((a, b) => b.count - a.count)
+		.slice(0, 6);
+
+	// Usar dados mensais do backend ou fallback para dados locais
+	const monthlyData = processStats.monthlyData && processStats.monthlyData.length > 0
+		? processStats.monthlyData
+		: [];
 
 	const typeData = processes.reduce((acc, process) => {
 		const type = process.tags?.[0] || "Outros";
@@ -72,50 +121,104 @@ const AdminDashboard = () => {
 
 	const COLORS = ['#3b82f6', '#22c55e', '#eab308', '#a855f7', '#f97316'];
 
+	// Calcular trends dinamicamente
+	const clientTrend = clientStats.clientsLastMonth > 0
+		? clientStats.clientsThisMonth - clientStats.clientsLastMonth
+		: clientStats.clientsThisMonth;
+	const clientTrendText = clientTrend > 0 
+		? `+${clientTrend} este mês` 
+		: clientTrend < 0 
+		? `${clientTrend} este mês` 
+		: clientStats.clientsThisMonth > 0 
+		? `${clientStats.clientsThisMonth} este mês` 
+		: "Sem novos clientes";
+
+	const processTrend = processStats.processesLastMonth > 0
+		? processStats.processesThisMonth - processStats.processesLastMonth
+		: processStats.processesThisMonth;
+	const processTrendText = processTrend > 0 
+		? `+${processTrend} este mês` 
+		: processTrend < 0 
+		? `${processTrend} este mês` 
+		: processStats.processesThisMonth > 0 
+		? `${processStats.processesThisMonth} este mês` 
+		: "Sem novos processos";
+
 	const statsCards = [
 		{
 			title: "Total de Clientes",
-			value: clientStats.totalClients,
+			value: clientStats.totalClients || 0,
 			icon: Users,
 			color: "text-blue-600",
 			bgColor: "bg-blue-100 dark:bg-blue-900",
-			trend: "+2 este mês",
-			trendUp: true,
+			trend: clientTrendText,
+			trendUp: clientTrend > 0,
 		},
 		{
 			title: "Total de Processos",
-			value: processStats.totalProcesses,
+			value: processStats.totalProcesses || 0,
 			icon: FileText,
 			color: "text-purple-600",
 			bgColor: "bg-purple-100 dark:bg-purple-900",
-			trend: "+1 este mês",
-			trendUp: true,
+			trend: processTrendText,
+			trendUp: processTrend > 0,
 		},
 		{
 			title: "Processos Ativos",
-			value: processStats.activeProcesses,
+			value: processStats.activeProcesses || 0,
 			icon: Clock,
 			color: "text-yellow-600",
 			bgColor: "bg-yellow-100 dark:bg-yellow-900",
-			trend: `${processStats.activeProcesses} em andamento`,
+			trend: `${processStats.activeProcesses || 0} em andamento`,
 			trendUp: null,
 		},
 		{
 			title: "Processos Concluídos",
-			value: processStats.completedProcesses,
+			value: processStats.completedProcesses || 0,
 			icon: CheckCircle,
 			color: "text-green-600",
 			bgColor: "bg-green-100 dark:bg-green-900",
-			trend: "20% de conclusão",
-			trendUp: true,
+			trend: `${processStats.completionRate || 0}% de conclusão`,
+			trendUp: processStats.completionRate > 0,
 		},
 	];
 
 	// Processos que precisam atenção (sem atualização há 30+ dias)
 	const processesNeedAttention = processes.filter(p => {
 		const daysSinceUpdate = Math.floor((new Date() - new Date(p.lastUpdate)) / (1000 * 60 * 60 * 24));
-		return daysSinceUpdate > 30 && p.status !== "Concluído";
+		return daysSinceUpdate > 30 && p.status !== "Concluído" && p.status !== "Arquivado";
 	});
+
+	const handleProcessClick = (processId) => {
+		if (!processId) return;
+		
+		const process = processes.find(p => {
+			const pId = p._id || p.id;
+			const searchId = processId._id || processId.id || processId;
+			return pId?.toString() === searchId?.toString() || pId === searchId;
+		});
+		
+		if (process) {
+			setSelectedProcess(process);
+			setOpenViewDialog(true);
+		}
+	};
+
+	const handleCloseViewDialog = (open) => {
+		setOpenViewDialog(open);
+		if (!open) {
+			setSelectedProcess(null);
+		}
+	};
+
+	const handleEditFromView = () => {
+		if (selectedProcess) {
+			const processId = selectedProcess._id || selectedProcess.id;
+			setOpenViewDialog(false);
+			// Redireciona para a página de processos com o processId para abrir o dialog de gerenciar
+			router.push(`/admin/dashboard/processos?edit=${processId}`);
+		}
+	};
 
 	// Atividade recente (últimos andamentos)
 	const recentActivity = processes.flatMap(p => 
@@ -183,9 +286,12 @@ const AdminDashboard = () => {
 								const daysSinceUpdate = Math.floor((new Date() - new Date(process.lastUpdate)) / (1000 * 60 * 60 * 24));
 								return (
 									<div
-										key={process.id}
+										key={process.id || process._id}
 										className="flex items-center justify-between p-3 border border-orange-200 dark:border-orange-800 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-950/10 transition-colors cursor-pointer"
-										onClick={() => router.push(`/admin/dashboard/processos`)}
+										onClick={(e) => {
+											e.stopPropagation();
+											handleProcessClick(process.id || process._id);
+										}}
 									>
 										<div className="flex-1">
 											<p className="font-medium">{process.actionType}</p>
@@ -238,15 +344,21 @@ const AdminDashboard = () => {
 						<p className="text-sm text-muted-foreground">Processos novos nos últimos 6 meses</p>
 					</CardHeader>
 					<CardContent>
-						<ResponsiveContainer width="100%" height={300}>
-							<LineChart data={monthlyData}>
-								<CartesianGrid strokeDasharray="3 3" />
-								<XAxis dataKey="month" />
-								<YAxis />
-								<Tooltip />
-								<Line type="monotone" dataKey="processos" stroke="#8b5cf6" strokeWidth={2} />
-							</LineChart>
-						</ResponsiveContainer>
+						{monthlyData.length > 0 ? (
+							<ResponsiveContainer width="100%" height={300}>
+								<LineChart data={monthlyData}>
+									<CartesianGrid strokeDasharray="3 3" />
+									<XAxis dataKey="month" />
+									<YAxis />
+									<Tooltip />
+									<Line type="monotone" dataKey="processos" stroke="#8b5cf6" strokeWidth={2} />
+								</LineChart>
+							</ResponsiveContainer>
+						) : (
+							<div className="flex items-center justify-center h-[300px] text-muted-foreground">
+								<p>Nenhum dado disponível</p>
+							</div>
+						)}
 					</CardContent>
 				</Card>
 
@@ -313,6 +425,16 @@ const AdminDashboard = () => {
 					</CardContent>
 				</Card>
 			</div>
+
+			{/* Dialog de Visualização */}
+			{selectedProcess && (
+				<ProcessViewDialog
+					open={openViewDialog}
+					onOpenChange={handleCloseViewDialog}
+					process={selectedProcess}
+					onEdit={handleEditFromView}
+				/>
+			)}
 		</div>
 	);
 };

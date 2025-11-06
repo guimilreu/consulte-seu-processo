@@ -2,6 +2,7 @@
 
 import React, { useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { useAuthStore } from "@/store/auth-store";
 import { useProcessStore } from "@/store/process-store";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Download } from "lucide-react";
@@ -17,10 +18,11 @@ const ProcessoDetalhes = () => {
 		if (params.id) {
 			fetchProcess(params.id);
 		}
-	}, [params.id]);
+	}, [params.id, fetchProcess]);
 
 	const handleExportPdf = () => {
-		exportToPdf(selectedProcess.id);
+		const processId = selectedProcess._id || selectedProcess.id;
+		exportToPdf(processId);
 	};
 
 	if (isLoading) {

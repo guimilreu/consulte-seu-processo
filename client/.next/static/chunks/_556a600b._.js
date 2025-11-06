@@ -345,11 +345,13 @@ __turbopack_context__.s([
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/card.jsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/input.jsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$label$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/label.jsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/button.jsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$spinner$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/spinner.jsx [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$store$2f$auth$2d$store$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/store/auth-store.js [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature();
 "use client";
@@ -359,86 +361,52 @@ var _s = __turbopack_context__.k.signature();
 ;
 ;
 ;
-// Função para validar email
-const validateEmail = (email)=>{
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-};
-const ClientLoginPage = ()=>{
+;
+;
+const LoginPage = ()=>{
     _s();
+    const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
+    const { login, isLoading, error, user } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$store$2f$auth$2d$store$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useAuthStore"])();
     const [email, setEmail] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
     const [password, setPassword] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
-    const [errors, setErrors] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])({});
-    const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
-    const handleEmailChange = (e)=>{
-        setEmail(e.target.value);
-        // Limpa o erro quando o usuário digita
-        if (errors.email) {
-            setErrors((prev)=>({
-                    ...prev,
-                    email: null
-                }));
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "LoginPage.useEffect": ()=>{
+            if (user) {
+                if (user.role === "admin" || user.role === "lawyer") {
+                    router.push("/admin/dashboard");
+                } else {
+                    router.push("/dashboard");
+                }
+            }
         }
-    };
-    const handlePasswordChange = (e)=>{
-        setPassword(e.target.value);
-        // Limpa o erro quando o usuário digita
-        if (errors.password) {
-            setErrors((prev)=>({
-                    ...prev,
-                    password: null
-                }));
-        }
-    };
-    const handleSubmit = (e)=>{
+    }["LoginPage.useEffect"], [
+        router,
+        user
+    ]);
+    const handleSubmit = async (e)=>{
         e.preventDefault();
-        setIsLoading(true);
-        const newErrors = {};
-        // Valida email
-        if (!email) {
-            newErrors.email = "Email é obrigatório";
-        } else if (!validateEmail(email)) {
-            newErrors.email = "Email inválido";
+        const result = await login(email, password);
+        if (result.success) {
+            // Redireciona baseado no role
+            if (result.user.role === "admin" || result.user.role === "lawyer") {
+                router.push("/admin/dashboard");
+            } else {
+                router.push("/dashboard");
+            }
         }
-        // Valida senha
-        if (!password) {
-            newErrors.password = "Senha é obrigatória";
-        } else if (password.length < 6) {
-            newErrors.password = "A senha deve ter no mínimo 6 caracteres";
-        }
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
-            setIsLoading(false);
-            return;
-        }
-        console.log({
-            email: email,
-            password: password
-        });
-        setTimeout(()=>{
-            setIsLoading(false);
-        }, 2000);
-    // setIsLoading(false);
-    // Aqui você faria a chamada para a API de login
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "min-h-screen flex items-center justify-center p-4",
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-            className: "w-full max-w-md space-y-8",
+            className: "w-full max-w-md flex flex-col gap-4",
             children: [
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "text-center",
-                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
-                        className: "text-3xl font-bold tracking-tight",
-                        children: "LOGO"
-                    }, void 0, false, {
-                        fileName: "[project]/app/login/page.jsx",
-                        lineNumber: 84,
-                        columnNumber: 6
-                    }, ("TURBOPACK compile-time value", void 0))
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
+                    src: "/logo-1.png",
+                    alt: "Logo",
+                    className: "h-16 mx-auto mb-2"
                 }, void 0, false, {
                     fileName: "[project]/app/login/page.jsx",
-                    lineNumber: 83,
+                    lineNumber: 46,
                     columnNumber: 5
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -450,20 +418,20 @@ const ClientLoginPage = ()=>{
                                     children: "Entrar"
                                 }, void 0, false, {
                                     fileName: "[project]/app/login/page.jsx",
-                                    lineNumber: 89,
+                                    lineNumber: 50,
                                     columnNumber: 7
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardDescription"], {
-                                    children: "Digite seu email e senha para acessar o sistema"
+                                    children: "Digite seu email e senha para acessar"
                                 }, void 0, false, {
                                     fileName: "[project]/app/login/page.jsx",
-                                    lineNumber: 90,
+                                    lineNumber: 51,
                                     columnNumber: 7
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/login/page.jsx",
-                            lineNumber: 88,
+                            lineNumber: 49,
                             columnNumber: 6
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -480,7 +448,7 @@ const ClientLoginPage = ()=>{
                                                     children: "Email"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/login/page.jsx",
-                                                    lineNumber: 96,
+                                                    lineNumber: 57,
                                                     columnNumber: 9
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -488,25 +456,17 @@ const ClientLoginPage = ()=>{
                                                     type: "email",
                                                     placeholder: "seu@email.com",
                                                     value: email,
-                                                    onChange: handleEmailChange,
-                                                    "aria-invalid": errors.email ? "true" : "false"
+                                                    onChange: (e)=>setEmail(e.target.value),
+                                                    disabled: isLoading
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/login/page.jsx",
-                                                    lineNumber: 97,
+                                                    lineNumber: 58,
                                                     columnNumber: 9
-                                                }, ("TURBOPACK compile-time value", void 0)),
-                                                errors.email && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                    className: "text-sm text-destructive",
-                                                    children: errors.email
-                                                }, void 0, false, {
-                                                    fileName: "[project]/app/login/page.jsx",
-                                                    lineNumber: 105,
-                                                    columnNumber: 26
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/login/page.jsx",
-                                            lineNumber: 95,
+                                            lineNumber: 56,
                                             columnNumber: 8
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -517,7 +477,7 @@ const ClientLoginPage = ()=>{
                                                     children: "Senha"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/login/page.jsx",
-                                                    lineNumber: 109,
+                                                    lineNumber: 69,
                                                     columnNumber: 9
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -525,86 +485,90 @@ const ClientLoginPage = ()=>{
                                                     type: "password",
                                                     placeholder: "••••••",
                                                     value: password,
-                                                    onChange: handlePasswordChange,
-                                                    "aria-invalid": errors.password ? "true" : "false"
+                                                    onChange: (e)=>setPassword(e.target.value),
+                                                    disabled: isLoading
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/login/page.jsx",
-                                                    lineNumber: 110,
+                                                    lineNumber: 70,
                                                     columnNumber: 9
-                                                }, ("TURBOPACK compile-time value", void 0)),
-                                                errors.password && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                    className: "text-sm text-destructive",
-                                                    children: errors.password
-                                                }, void 0, false, {
-                                                    fileName: "[project]/app/login/page.jsx",
-                                                    lineNumber: 118,
-                                                    columnNumber: 29
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/login/page.jsx",
-                                            lineNumber: 108,
+                                            lineNumber: 68,
                                             columnNumber: 8
+                                        }, ("TURBOPACK compile-time value", void 0)),
+                                        error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                            className: "text-sm text-destructive",
+                                            children: error
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/login/page.jsx",
+                                            lineNumber: 80,
+                                            columnNumber: 18
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/login/page.jsx",
-                                    lineNumber: 94,
+                                    lineNumber: 55,
                                     columnNumber: 7
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardFooter"], {
-                                    className: "pt-6",
                                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
                                         type: "submit",
-                                        className: "w-full font-bold",
+                                        className: "w-full font-bold mt-6",
                                         disabled: isLoading,
                                         children: [
                                             isLoading && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$spinner$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Spinner2"], {}, void 0, false, {
                                                 fileName: "[project]/app/login/page.jsx",
-                                                lineNumber: 124,
+                                                lineNumber: 85,
                                                 columnNumber: 23
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             "Entrar"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/login/page.jsx",
-                                        lineNumber: 123,
+                                        lineNumber: 84,
                                         columnNumber: 8
                                     }, ("TURBOPACK compile-time value", void 0))
                                 }, void 0, false, {
                                     fileName: "[project]/app/login/page.jsx",
-                                    lineNumber: 122,
+                                    lineNumber: 83,
                                     columnNumber: 7
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/login/page.jsx",
-                            lineNumber: 93,
+                            lineNumber: 54,
                             columnNumber: 6
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/login/page.jsx",
-                    lineNumber: 87,
+                    lineNumber: 48,
                     columnNumber: 5
                 }, ("TURBOPACK compile-time value", void 0))
             ]
         }, void 0, true, {
             fileName: "[project]/app/login/page.jsx",
-            lineNumber: 82,
+            lineNumber: 45,
             columnNumber: 4
         }, ("TURBOPACK compile-time value", void 0))
     }, void 0, false, {
         fileName: "[project]/app/login/page.jsx",
-        lineNumber: 81,
+        lineNumber: 44,
         columnNumber: 3
     }, ("TURBOPACK compile-time value", void 0));
 };
-_s(ClientLoginPage, "rQDnn7DrCWcmaIM0jYj3b/lOCz0=");
-_c = ClientLoginPage;
-const __TURBOPACK__default__export__ = ClientLoginPage;
+_s(LoginPage, "RDX8nQdwRxZGMtQqoGjrQ/kdYLg=", false, function() {
+    return [
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"],
+        __TURBOPACK__imported__module__$5b$project$5d2f$store$2f$auth$2d$store$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useAuthStore"]
+    ];
+});
+_c = LoginPage;
+const __TURBOPACK__default__export__ = LoginPage;
 var _c;
-__turbopack_context__.k.register(_c, "ClientLoginPage");
+__turbopack_context__.k.register(_c, "LoginPage");
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);
 }

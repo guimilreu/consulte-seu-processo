@@ -21,13 +21,15 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Mail, Phone, User, FileText, Calendar, Eye, Edit } from "lucide-react";
+import { Plus, Mail, Phone, User, FileText, Calendar, Eye, Edit, Trash2, Users } from "lucide-react";
+import ConfirmationDialog from "@/components/ui/confirmation-dialog";
+import EmptyState from "@/components/ui/empty-state";
 
 const ClientesPage = () => {
 	const router = useRouter();
-	const { isAuthenticated, isAdmin } = useAuthStore();
-	const { clients, fetchClients, addClient, updateClient, isLoading } = useClientStore();
-	const { getProcessesByClient } = useProcessStore();
+	const { isAdmin, user } = useAuthStore();
+	const { clients, fetchClients, addClient, updateClient, deleteClient, isLoading } = useClientStore();
+	const { processes, fetchAllProcesses, getProcessesByClient } = useProcessStore();
 	
 	// Estados para Dialog de Novo Cliente
 	const [openNewClient, setOpenNewClient] = useState(false);
@@ -52,15 +54,16 @@ const ClientesPage = () => {
 		phone: "",
 	});
 
+	// Estados para Confirmação de Exclusão
+	const [confirmDeleteClient, setConfirmDeleteClient] = useState(false);
+	const [clientToDelete, setClientToDelete] = useState(null);
+
 	useEffect(() => {
-		if (!isAuthenticated) {
-			router.push("/login");
-		} else if (!isAdmin()) {
-			router.push("/dashboard");
-		} else {
+		if (user && isAdmin()) {
 			fetchClients();
+			fetchAllProcesses();
 		}
-	}, [isAuthenticated, isAdmin]);
+	}, [user, isAdmin, fetchClients, fetchAllProcesses]);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -80,7 +83,8 @@ const ClientesPage = () => {
 
 	const handleViewProcesses = (client) => {
 		setSelectedClient(client);
-		const processes = getProcessesByClient(client.id);
+		const clientId = client._id || client.id;
+		const processes = getProcessesByClient(clientId);
 		setClientProcesses(processes);
 		setOpenViewProcesses(true);
 	};
@@ -99,7 +103,8 @@ const ClientesPage = () => {
 	const handleUpdateSubmit = async (e) => {
 		e.preventDefault();
 		toast.loading("Salvando alterações...");
-		const result = await updateClient(selectedClient.id, editFormData);
+		const clientId = selectedClient._id || selectedClient.id;
+		const result = await updateClient(clientId, editFormData);
 		toast.dismiss();
 
 		if (result.success) {
@@ -108,6 +113,29 @@ const ClientesPage = () => {
 			await fetchClients();
 		} else {
 			toast.error("Erro ao atualizar cliente. Tente novamente.");
+		}
+	};
+
+	const handleDeleteClientConfirm = (client) => {
+		setClientToDelete(client);
+		setConfirmDeleteClient(true);
+	};
+
+	const handleDeleteClient = async () => {
+		if (!clientToDelete) return;
+
+		toast.loading("Deletando cliente...");
+		const clientId = clientToDelete._id || clientToDelete.id;
+		const result = await deleteClient(clientId);
+		toast.dismiss();
+
+		if (result.success) {
+			toast.success("Cliente deletado com sucesso!");
+			setConfirmDeleteClient(false);
+			setClientToDelete(null);
+			await fetchClients();
+		} else {
+			toast.error(result.error || "Erro ao deletar cliente. Tente novamente.");
 		}
 	};
 
@@ -209,58 +237,90 @@ const ClientesPage = () => {
 				</Dialog>
 			</div>
 
-			<div className="grid gap-4">
-				{clients.map((client) => (
-					<Card key={client.id} className="hover:shadow-md transition-shadow">
-						<CardHeader>
-							<div className="flex items-start justify-between">
-								<div className="flex-1">
-									<CardTitle className="text-lg mb-3">{client.name}</CardTitle>
-									<div className="grid grid-cols-2 gap-3 text-sm">
-										<div className="flex items-center gap-2 text-muted-foreground">
-											<Mail className="h-4 w-4" />
-											<span>{client.email}</span>
-										</div>
-										<div className="flex items-center gap-2 text-muted-foreground">
-											<Phone className="h-4 w-4" />
-											<span>{client.phone}</span>
-										</div>
-										<div className="flex items-center gap-2 text-muted-foreground">
-											<User className="h-4 w-4" />
-											<span>{client.cpf}</span>
-										</div>
-										<div className="flex items-center gap-2 text-muted-foreground">
-											<FileText className="h-4 w-4" />
-											<span>
-												{getProcessesByClient(client.id).length} processo
-												{getProcessesByClient(client.id).length !== 1 ? "s" : ""}
-											</span>
+			{isLoading && clients.length === 0 ? (
+				<Card>
+					<CardContent>
+						<EmptyState icon={Users} title="Carregando..." description="Aguarde enquanto carregamos os clientes" />
+					</CardContent>
+				</Card>
+			) : clients.length === 0 ? (
+				<Card>
+					<CardContent>
+						<EmptyState
+							icon={Users}
+							title="Nenhum cliente cadastrado"
+							description="Comece cadastrando o primeiro cliente do sistema"
+							action={() => setOpenNewClient(true)}
+							actionLabel="Cadastrar Primeiro Cliente"
+						/>
+					</CardContent>
+				</Card>
+			) : (
+				<div className="grid gap-4">
+					{clients.map((client) => {
+						const clientId = client._id || client.id;
+						return (
+						<Card key={clientId} className="hover:shadow-md transition-shadow">
+							<CardHeader>
+								<div className="flex items-start justify-between">
+									<div className="flex-1">
+										<CardTitle className="text-lg mb-3">{client.name}</CardTitle>
+										<div className="grid grid-cols-2 gap-3 text-sm">
+											<div className="flex items-center gap-2 text-muted-foreground">
+												<Mail className="h-4 w-4" />
+												<span>{client.email}</span>
+											</div>
+											<div className="flex items-center gap-2 text-muted-foreground">
+												<Phone className="h-4 w-4" />
+												<span>{client.phone}</span>
+											</div>
+											<div className="flex items-center gap-2 text-muted-foreground">
+												<User className="h-4 w-4" />
+												<span>{client.cpf}</span>
+											</div>
+											<div className="flex items-center gap-2 text-muted-foreground">
+												<FileText className="h-4 w-4" />
+												<span>
+													{getProcessesByClient(clientId).length} processo
+													{getProcessesByClient(clientId).length !== 1 ? "s" : ""}
+												</span>
+											</div>
 										</div>
 									</div>
+									<div className="flex gap-2">
+										<Button
+											variant="outline"
+											size="sm"
+											onClick={() => handleEditClient(client)}
+										>
+											<Edit className="h-4 w-4 mr-1" />
+											Editar
+										</Button>
+										<Button
+											variant="outline"
+											size="sm"
+											onClick={() => handleViewProcesses(client)}
+										>
+											<Eye className="h-4 w-4 mr-1" />
+											Ver Processos
+										</Button>
+										<Button
+											variant="outline"
+											size="sm"
+											onClick={() => handleDeleteClientConfirm(client)}
+											className="text-destructive hover:text-destructive"
+										>
+											<Trash2 className="h-4 w-4 mr-1" />
+											Deletar
+										</Button>
+									</div>
 								</div>
-								<div className="flex gap-2">
-									<Button
-										variant="outline"
-										size="sm"
-										onClick={() => handleEditClient(client)}
-									>
-										<Edit className="h-4 w-4 mr-1" />
-										Editar
-									</Button>
-									<Button
-										variant="outline"
-										size="sm"
-										onClick={() => handleViewProcesses(client)}
-									>
-										<Eye className="h-4 w-4 mr-1" />
-										Ver Processos
-									</Button>
-								</div>
-							</div>
-						</CardHeader>
-					</Card>
-				))}
-			</div>
+							</CardHeader>
+						</Card>
+						);
+					})}
+				</div>
+			)}
 
 			{/* Dialog de Edição de Cliente */}
 			<Dialog open={openEditClient} onOpenChange={setOpenEditClient}>
@@ -367,7 +427,16 @@ const ClientesPage = () => {
 						) : (
 							<div className="space-y-4 py-4">
 								{clientProcesses.map((process) => (
-									<Card key={process.id} className="hover:shadow-md transition-shadow">
+									<Card 
+										key={process.id} 
+										className="hover:shadow-md transition-shadow cursor-pointer hover:border-primary/50"
+										onClick={() => {
+											const processId = process._id || process.id;
+											setOpenViewProcesses(false);
+											// Redireciona para a página de processos com o processId para abrir o dialog de visualização
+											router.push(`/admin/dashboard/processos?view=${processId}`);
+										}}
+									>
 										<CardHeader>
 											<div className="flex items-start justify-between gap-4">
 												<div className="flex-1 space-y-3">
@@ -455,6 +524,17 @@ const ClientesPage = () => {
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
+
+			{/* Dialog de Confirmação para Deletar Cliente */}
+			<ConfirmationDialog
+				open={confirmDeleteClient}
+				onOpenChange={setConfirmDeleteClient}
+				title="Deletar Cliente"
+				description={`Tem certeza que deseja deletar o cliente "${clientToDelete?.name}"? Esta ação não pode ser desfeita.`}
+				onConfirm={handleDeleteClient}
+				confirmLabel="Deletar"
+				cancelLabel="Cancelar"
+			/>
 		</div>
 	);
 };

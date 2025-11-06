@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,18 +11,28 @@ import { useAuthStore } from "@/store/auth-store";
 
 const LoginPage = () => {
 	const router = useRouter();
-	const { login, isLoading, error } = useAuthStore();
+	const { login, isLoading, error, user } = useAuthStore();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+
+	useEffect(() => {
+		if (user) {
+			if (user.role === "admin" || user.role === "lawyer") {
+				router.push("/admin/dashboard");
+			} else {
+				router.push("/dashboard");
+			}
+		}
+	}, [router, user]);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
 		const result = await login(email, password);
-		
+
 		if (result.success) {
 			// Redireciona baseado no role
-			if (result.user.role === "admin" || result.user.role === "team") {
+			if (result.user.role === "admin" || result.user.role === "lawyer") {
 				router.push("/admin/dashboard");
 			} else {
 				router.push("/dashboard");
@@ -32,11 +42,8 @@ const LoginPage = () => {
 
 	return (
 		<div className="min-h-screen flex items-center justify-center p-4">
-			<div className="w-full max-w-md space-y-8">
-				<div className="text-center">
-					<h1 className="text-3xl font-bold tracking-tight">LOGO</h1>
-					<p className="text-sm text-muted-foreground mt-2">Consulte seu Processo</p>
-				</div>
+			<div className="w-full max-w-md flex flex-col gap-4">
+				<img src="/logo-1.png" alt="Logo" className="h-16 mx-auto mb-2" />
 
 				<Card>
 					<CardHeader>
@@ -69,7 +76,7 @@ const LoginPage = () => {
 									disabled={isLoading}
 								/>
 							</div>
-							
+
 							{error && <p className="text-sm text-destructive">{error}</p>}
 						</CardContent>
 

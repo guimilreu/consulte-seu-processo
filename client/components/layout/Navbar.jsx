@@ -36,8 +36,8 @@ const Navbar = () => {
 	const navItems = isAdmin() ? adminNavItems : clientNavItems;
 	const homeLink = isAdmin() ? "/admin/dashboard" : "/dashboard";
 
-	const handleLogout = () => {
-		logout();
+	const handleLogout = async () => {
+		await logout();
 		router.push("/login");
 	};
 
@@ -68,7 +68,7 @@ const Navbar = () => {
 				{/* Logo */}
 				<div className="mr-8 flex items-center">
 					<Link href={homeLink} className="flex items-center space-x-2">
-						<span className="text-xl font-bold tracking-tight">LOGO</span>
+						<img src="/logo-2.png" alt="Logo" className="h-14" />
 					</Link>
 				</div>
 

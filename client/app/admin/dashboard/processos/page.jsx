@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { useAuthStore } from "@/store/auth-store";
 import { useProcessStore } from "@/store/process-store";
@@ -23,19 +23,22 @@ import {
 } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Plus, FileText, Calendar, User, Edit, Clock, Trash2, Filter, X } from "lucide-react";
+import { Plus, FileText, Calendar, User, Edit, Clock, Trash2, Filter, X, Eye } from "lucide-react";
 import FileUpload from "@/components/ui/file-upload";
 import EmptyState from "@/components/ui/empty-state";
 import ConfirmationDialog from "@/components/ui/confirmation-dialog";
+import ProcessViewDialog from "@/components/process/ProcessViewDialog";
 
 const ProcessosPage = () => {
 	const router = useRouter();
-	const { isAuthenticated, isAdmin } = useAuthStore();
+	const searchParams = useSearchParams();
+	const { isAdmin, user } = useAuthStore();
 	const {
 		processes,
 		fetchAllProcesses,
 		createProcess,
 		updateProcess,
+		deleteProcess,
 		addTimeline,
 		updateTimeline,
 		deleteTimeline,
@@ -69,6 +72,11 @@ const ProcessosPage = () => {
 		clientId: "",
 	});
 	const [sortBy, setSortBy] = useState("recent"); // "recent", "oldest", "az", "za", "priority"
+
+	// Estados para Dialog de Visualizar Processo
+	const [openViewProcess, setOpenViewProcess] = useState(false);
+	const [viewProcess, setViewProcess] = useState(null);
+	const [hasProcessedQueryParams, setHasProcessedQueryParams] = useState(false);
 
 	// Estados para Dialog de Gerenciar Processo
 	const [openManageProcess, setOpenManageProcess] = useState(false);
@@ -111,6 +119,8 @@ const ProcessosPage = () => {
 	// Estados para Confirmação
 	const [confirmDelete, setConfirmDelete] = useState(false);
 	const [timelineToDelete, setTimelineToDelete] = useState(null);
+	const [confirmDeleteProcess, setConfirmDeleteProcess] = useState(false);
+	const [processToDelete, setProcessToDelete] = useState(null);
 
 	// Tags predefinidas
 	const availableTags = [
@@ -138,7 +148,10 @@ const ProcessosPage = () => {
 			result = result.filter((p) => p.tags?.some((tag) => filters.tags.includes(tag)));
 		}
 		if (filters.clientId) {
-			result = result.filter((p) => p.clientId === parseInt(filters.clientId));
+			result = result.filter((p) => {
+				const pClientId = p.clientId?._id || p.clientId;
+				return pClientId === filters.clientId || pClientId?.toString() === filters.clientId;
+			});
 		}
 
 		// Aplicar ordenação
@@ -254,31 +267,101 @@ const ProcessosPage = () => {
 	];
 
 	useEffect(() => {
-		if (!isAuthenticated) {
-			router.push("/login");
-		} else if (!isAdmin()) {
-			router.push("/dashboard");
-		} else {
+		if (user && isAdmin()) {
 			fetchAllProcesses();
 			fetchClients();
 		}
-	}, [isAuthenticated, isAdmin]);
+	}, [user, isAdmin, fetchAllProcesses, fetchClients]);
+
+	// Abrir dialogs automaticamente baseado nos query parameters
+	useEffect(() => {
+		if (!processes.length || !searchParams || hasProcessedQueryParams) return;
+
+		const viewProcessId = searchParams.get("view");
+		const editProcessId = searchParams.get("edit");
+
+		if (viewProcessId) {
+			const process = processes.find(p => {
+				const pId = p._id || p.id;
+				return pId?.toString() === viewProcessId || pId === viewProcessId;
+			});
+			if (process) {
+				setViewProcess(process);
+				setOpenViewProcess(true);
+				setHasProcessedQueryParams(true);
+				// Limpar query parameter após um pequeno delay para garantir que o dialog abriu
+				setTimeout(() => {
+					router.replace("/admin/dashboard/processos", { scroll: false });
+				}, 300);
+				return;
+			}
+		}
+
+		if (editProcessId) {
+			const process = processes.find(p => {
+				const pId = p._id || p.id;
+				return pId?.toString() === editProcessId || pId === editProcessId;
+			});
+			if (process) {
+				setSelectedProcess(process);
+				setEditForm({
+					processNumber: process.processNumber,
+					actionType: process.actionType,
+					court: process.court,
+					plaintiff: process.plaintiff,
+					defendant: process.defendant,
+					filingDate: process.filingDate,
+					caseValue: process.caseValue,
+					subject: process.subject,
+					description: process.description,
+					status: process.status,
+					tags: process.tags || [],
+					priority: process.priority || "media",
+				});
+				setTimelineForm({
+					title: "",
+					text: "",
+					type: "official",
+					date: new Date().toISOString().split("T")[0],
+					createdBy: "Administrador",
+					attachments: [],
+				});
+				setManageMode("edit");
+				setOpenManageProcess(true);
+				setHasProcessedQueryParams(true);
+				// Limpar query parameter após um pequeno delay para garantir que o dialog abriu
+				setTimeout(() => {
+					router.replace("/admin/dashboard/processos", { scroll: false });
+				}, 300);
+			}
+		}
+	}, [searchParams, processes, router, hasProcessedQueryParams]);
+
+	// Resetar flag quando não há query parameters
+	useEffect(() => {
+		if (searchParams && !searchParams.get("view") && !searchParams.get("edit")) {
+			setHasProcessedQueryParams(false);
+		}
+	}, [searchParams]);
 
 	// Handlers para Novo Processo
 	const handleNewProcessSubmit = async (e) => {
 		e.preventDefault();
 
-		const client = clients.find((c) => c.id === parseInt(newProcessForm.clientId));
+		const client = clients.find((c) => {
+			const cId = c._id || c.id;
+			return cId?.toString() === newProcessForm.clientId || cId === newProcessForm.clientId;
+		});
 		if (!client) {
 			toast.error("Selecione um cliente válido");
 			return;
 		}
 
 		toast.loading("Criando processo...");
+		const clientId = client._id || client.id;
 		const result = await createProcess({
 			...newProcessForm,
-			clientId: parseInt(newProcessForm.clientId),
-			clientName: client.name,
+			clientId: clientId,
 		});
 
 		toast.dismiss();
@@ -304,6 +387,26 @@ const ProcessosPage = () => {
 		} else {
 			toast.error("Erro ao criar processo. Tente novamente.");
 		}
+	};
+
+	// Handlers para Visualizar Processo
+	const handleOpenView = (process) => {
+		if (!process) return;
+		setViewProcess(process);
+		setOpenViewProcess(true);
+	};
+
+	const handleCloseViewDialog = (open) => {
+		setOpenViewProcess(open);
+		if (!open) {
+			setViewProcess(null);
+		}
+	};
+
+	const handleEditFromView = () => {
+		if (!viewProcess) return;
+		setOpenViewProcess(false);
+		handleOpenManage(viewProcess);
 	};
 
 	// Handlers para Gerenciar Processo
@@ -438,6 +541,29 @@ const ProcessosPage = () => {
 		}
 	};
 
+	const handleDeleteProcessConfirm = (process) => {
+		setProcessToDelete(process);
+		setConfirmDeleteProcess(true);
+	};
+
+	const handleDeleteProcess = async () => {
+		if (!processToDelete) return;
+
+		toast.loading("Deletando processo...");
+		const processId = processToDelete._id || processToDelete.id;
+		const result = await deleteProcess(processId);
+		toast.dismiss();
+
+		if (result.success) {
+			toast.success("Processo deletado com sucesso!");
+			setConfirmDeleteProcess(false);
+			setProcessToDelete(null);
+			await fetchAllProcesses();
+		} else {
+			toast.error(result.error || "Erro ao deletar processo. Tente novamente.");
+		}
+	};
+
 	if (isLoading && processes.length === 0) {
 		return <EmptyState icon={Clock} title="Carregando..." description="Aguarde enquanto carregamos os processos" />;
 	}
@@ -489,11 +615,14 @@ const ProcessosPage = () => {
 														Nenhum cliente cadastrado
 													</div>
 												) : (
-													clients.map((client) => (
-														<SelectItem key={client.id} value={client.id.toString()}>
+													clients.map((client) => {
+														const clientId = client._id || client.id;
+														return (
+														<SelectItem key={clientId} value={clientId.toString()}>
 															{client.name} - {client.cpf}
 														</SelectItem>
-													))
+														);
+													})
 												)}
 											</SelectContent>
 										</Select>
@@ -714,10 +843,30 @@ const ProcessosPage = () => {
 													<SelectValue />
 												</SelectTrigger>
 												<SelectContent>
-													<SelectItem value="urgente">🔴 Urgente</SelectItem>
-													<SelectItem value="alta">🟠 Alta</SelectItem>
-													<SelectItem value="media">🔵 Média</SelectItem>
-													<SelectItem value="baixa">⚪ Baixa</SelectItem>
+													<SelectItem value="urgente">
+														<div className="flex items-center gap-2">
+															<div className="w-2 h-2 rounded-full bg-red-500"></div>
+															<span>Urgente</span>
+														</div>
+													</SelectItem>
+													<SelectItem value="alta">
+														<div className="flex items-center gap-2">
+															<div className="w-2 h-2 rounded-full bg-orange-500"></div>
+															<span>Alta</span>
+														</div>
+													</SelectItem>
+													<SelectItem value="media">
+														<div className="flex items-center gap-2">
+															<div className="w-2 h-2 rounded-full bg-blue-500"></div>
+															<span>Média</span>
+														</div>
+													</SelectItem>
+													<SelectItem value="baixa">
+														<div className="flex items-center gap-2">
+															<div className="w-2 h-2 rounded-full bg-gray-400"></div>
+															<span>Baixa</span>
+														</div>
+													</SelectItem>
 												</SelectContent>
 											</Select>
 										</div>
@@ -801,7 +950,12 @@ const ProcessosPage = () => {
 											<SelectValue />
 										</SelectTrigger>
 										<SelectContent>
-											<SelectItem value="todos">✓ Todos os Status</SelectItem>
+											<SelectItem value="todos">
+												<div className="flex items-center gap-2">
+													<div className="w-2 h-2 rounded-full bg-gray-400"></div>
+													<span>Todos os Status</span>
+												</div>
+											</SelectItem>
 											<SelectItem value="Distribuído">Distribuído</SelectItem>
 											<SelectItem value="Aguardando análise inicial">
 												Aguardando análise
@@ -840,11 +994,36 @@ const ProcessosPage = () => {
 											<SelectValue />
 										</SelectTrigger>
 										<SelectContent>
-											<SelectItem value="todas">✓ Todas Prioridades</SelectItem>
-											<SelectItem value="urgente">🔴 Urgente</SelectItem>
-											<SelectItem value="alta">🟠 Alta</SelectItem>
-											<SelectItem value="media">🔵 Média</SelectItem>
-											<SelectItem value="baixa">⚪ Baixa</SelectItem>
+											<SelectItem value="todas">
+												<div className="flex items-center gap-2">
+													<div className="w-2 h-2 rounded-full bg-gray-400"></div>
+													<span>Todas Prioridades</span>
+												</div>
+											</SelectItem>
+											<SelectItem value="urgente">
+												<div className="flex items-center gap-2">
+													<div className="w-2 h-2 rounded-full bg-red-500"></div>
+													<span>Urgente</span>
+												</div>
+											</SelectItem>
+											<SelectItem value="alta">
+												<div className="flex items-center gap-2">
+													<div className="w-2 h-2 rounded-full bg-orange-500"></div>
+													<span>Alta</span>
+												</div>
+											</SelectItem>
+											<SelectItem value="media">
+												<div className="flex items-center gap-2">
+													<div className="w-2 h-2 rounded-full bg-blue-500"></div>
+													<span>Média</span>
+												</div>
+											</SelectItem>
+											<SelectItem value="baixa">
+												<div className="flex items-center gap-2">
+													<div className="w-2 h-2 rounded-full bg-gray-400"></div>
+													<span>Baixa</span>
+												</div>
+											</SelectItem>
 										</SelectContent>
 									</Select>
 								</div>
@@ -868,7 +1047,12 @@ const ProcessosPage = () => {
 											<SelectValue />
 										</SelectTrigger>
 										<SelectContent>
-											<SelectItem value="todas">✓ Todas as Áreas</SelectItem>
+											<SelectItem value="todas">
+												<div className="flex items-center gap-2">
+													<div className="w-2 h-2 rounded-full bg-gray-400"></div>
+													<span>Todas as Áreas</span>
+												</div>
+											</SelectItem>
 											{availableTags.map((tag) => (
 												<SelectItem key={tag} value={tag}>
 													{tag}
@@ -897,12 +1081,20 @@ const ProcessosPage = () => {
 											<SelectValue />
 										</SelectTrigger>
 										<SelectContent>
-											<SelectItem value="todos">✓ Todos os Clientes</SelectItem>
-											{clients.map((client) => (
-												<SelectItem key={client.id} value={client.id.toString()}>
+											<SelectItem value="todos">
+												<div className="flex items-center gap-2">
+													<div className="w-2 h-2 rounded-full bg-gray-400"></div>
+													<span>Todos os Clientes</span>
+												</div>
+											</SelectItem>
+											{clients.map((client) => {
+												const clientId = client._id || client.id;
+												return (
+												<SelectItem key={clientId} value={clientId.toString()}>
 													{client.name}
 												</SelectItem>
-											))}
+												);
+											})}
 										</SelectContent>
 									</Select>
 								</div>
@@ -966,8 +1158,10 @@ const ProcessosPage = () => {
 						</CardContent>
 					</Card>
 				) : (
-					filteredAndSortedProcesses.map((process) => (
-						<Card key={process.id} className="hover:shadow-md transition-shadow">
+					filteredAndSortedProcesses.map((process) => {
+						const processId = process._id || process.id;
+						return (
+						<Card key={processId} className="hover:shadow-md transition-shadow">
 							<CardHeader>
 								<div className="flex items-start justify-between gap-4">
 									<div className="flex-1">
@@ -982,12 +1176,15 @@ const ProcessosPage = () => {
 													variant="outline"
 													className={`${getPriorityColor(
 														process.priority
-													)} text-xs font-semibold border`}
+													)} text-xs font-semibold border flex items-center gap-1.5`}
 												>
-													{process.priority === "urgente" && "🔴 URGENTE"}
-													{process.priority === "alta" && "🟠 Alta"}
-													{process.priority === "media" && "🔵 Média"}
-													{process.priority === "baixa" && "⚪ Baixa"}
+													<div className={`w-2 h-2 rounded-full ${
+														process.priority === "urgente" ? "bg-red-500" :
+														process.priority === "alta" ? "bg-orange-500" :
+														process.priority === "media" ? "bg-blue-500" :
+														"bg-gray-400"
+													}`}></div>
+													<span className="uppercase">{process.priority}</span>
 												</Badge>
 											)}
 											{process.tags &&
@@ -1048,15 +1245,31 @@ const ProcessosPage = () => {
 										>
 											{process.status}
 										</Badge>
-										<Button size="sm" variant="outline" onClick={() => handleOpenManage(process)}>
-											<Edit className="h-4 w-4 mr-1" />
-											Gerenciar
-										</Button>
+										<div className="flex gap-2">
+											<Button size="sm" variant="outline" onClick={() => handleOpenView(process)}>
+												<Eye className="h-4 w-4 mr-1" />
+												Visualizar
+											</Button>
+											<Button size="sm" variant="outline" onClick={() => handleOpenManage(process)}>
+												<Edit className="h-4 w-4 mr-1" />
+												Gerenciar
+											</Button>
+											<Button 
+												size="sm" 
+												variant="outline" 
+												onClick={() => handleDeleteProcessConfirm(process)}
+												className="text-destructive hover:text-destructive"
+											>
+												<Trash2 className="h-4 w-4 mr-1" />
+												Deletar
+											</Button>
+										</div>
 									</div>
 								</div>
 							</CardHeader>
 						</Card>
-					))
+						);
+					})
 				)}
 			</div>
 
@@ -1269,10 +1482,30 @@ const ProcessosPage = () => {
 													<SelectValue />
 												</SelectTrigger>
 												<SelectContent>
-													<SelectItem value="urgente">🔴 Urgente</SelectItem>
-													<SelectItem value="alta">🟠 Alta</SelectItem>
-													<SelectItem value="media">🔵 Média</SelectItem>
-													<SelectItem value="baixa">⚪ Baixa</SelectItem>
+													<SelectItem value="urgente">
+														<div className="flex items-center gap-2">
+															<div className="w-2 h-2 rounded-full bg-red-500"></div>
+															<span>Urgente</span>
+														</div>
+													</SelectItem>
+													<SelectItem value="alta">
+														<div className="flex items-center gap-2">
+															<div className="w-2 h-2 rounded-full bg-orange-500"></div>
+															<span>Alta</span>
+														</div>
+													</SelectItem>
+													<SelectItem value="media">
+														<div className="flex items-center gap-2">
+															<div className="w-2 h-2 rounded-full bg-blue-500"></div>
+															<span>Média</span>
+														</div>
+													</SelectItem>
+													<SelectItem value="baixa">
+														<div className="flex items-center gap-2">
+															<div className="w-2 h-2 rounded-full bg-gray-400"></div>
+															<span>Baixa</span>
+														</div>
+													</SelectItem>
 												</SelectContent>
 											</Select>
 										</div>
@@ -1494,6 +1727,16 @@ const ProcessosPage = () => {
 				</DialogContent>
 			</Dialog>
 
+			{/* Dialog de Visualizar Processo */}
+			{viewProcess && (
+				<ProcessViewDialog
+					open={openViewProcess}
+					onOpenChange={handleCloseViewDialog}
+					process={viewProcess}
+					onEdit={handleEditFromView}
+				/>
+			)}
+
 			{/* Dialog de Edição de Andamento */}
 			<Dialog open={openEditTimeline} onOpenChange={setOpenEditTimeline}>
 				<DialogContent className="max-w-2xl">
@@ -1590,6 +1833,17 @@ const ProcessosPage = () => {
 				title="Deletar Andamento"
 				description={`Tem certeza que deseja deletar o andamento "${timelineToDelete?.title}"? Esta ação não pode ser desfeita.`}
 				onConfirm={handleDeleteTimeline}
+				confirmLabel="Deletar"
+				cancelLabel="Cancelar"
+			/>
+
+			{/* Dialog de Confirmação para Deletar Processo */}
+			<ConfirmationDialog
+				open={confirmDeleteProcess}
+				onOpenChange={setConfirmDeleteProcess}
+				title="Deletar Processo"
+				description={`Tem certeza que deseja deletar o processo "${processToDelete?.processNumber}"? Esta ação não pode ser desfeita.`}
+				onConfirm={handleDeleteProcess}
 				confirmLabel="Deletar"
 				cancelLabel="Cancelar"
 			/>

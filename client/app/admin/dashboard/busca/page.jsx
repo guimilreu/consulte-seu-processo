@@ -10,17 +10,15 @@ import { Search, FileText, Calendar, User } from "lucide-react";
 
 const BuscaPage = () => {
 	const router = useRouter();
-	const { isAuthenticated, isAdmin } = useAuthStore();
+	const { isAdmin, user } = useAuthStore();
 	const { search, searchResults, clearSearch, isLoading } = useProcessStore();
 	const [localSearch, setLocalSearch] = useState("");
 
 	useEffect(() => {
-		if (!isAuthenticated) {
-			router.push("/login");
-		} else if (!isAdmin()) {
+		if (user && !isAdmin()) {
 			router.push("/dashboard");
 		}
-	}, [isAuthenticated, isAdmin]);
+	}, [router, isAdmin, user]);
 
 	useEffect(() => {
 		const timer = setTimeout(() => {

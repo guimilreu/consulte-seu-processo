@@ -7,363 +7,10 @@ __turbopack_context__.s([
     ()=>useProcessStore
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zustand$2f$esm$2f$react$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/zustand/esm/react.mjs [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/api.js [app-client] (ecmascript)");
 "use client";
 ;
-// Dados mockados - No futuro virão da API
-const MOCK_PROCESSES = [
-    {
-        id: 1,
-        clientId: 1,
-        clientName: "Maria Silva Santos",
-        processNumber: "0001234-56.2023.8.02.0001",
-        actionType: "Ação de Indenização por Danos Morais",
-        court: "1ª Vara Cível da Comarca de Ourinhos",
-        plaintiff: "Maria Silva Santos",
-        defendant: "João Carlos Transportes Ltda.",
-        filingDate: "2023-03-15",
-        caseValue: "R$ 50.000,00",
-        subject: "Danos morais decorrentes de acidente de trânsito",
-        description: "Pedido de indenização por danos morais e materiais sofridos em acidente de trânsito causado por veículo da empresa ré",
-        status: "Aguardando perícia",
-        tags: [
-            "Cível"
-        ],
-        priority: "alta",
-        lastUpdate: "2024-10-01",
-        createdAt: "2023-03-15",
-        timeline: [
-            {
-                id: 1,
-                date: "2023-03-15",
-                title: "Processo Distribuído",
-                text: "Processo foi distribuído para a 1ª Vara Cível da Comarca de Ourinhos. Aguardando análise da petição inicial pelo juízo.",
-                type: "official",
-                attachments: [],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2023-03-15T10:30:00"
-            },
-            {
-                id: 2,
-                date: "2023-04-02",
-                title: "Petição Inicial Recebida",
-                text: "A petição inicial foi recebida e deferida pelo juízo. Determinada a citação da parte ré para apresentar contestação no prazo legal de 15 dias.",
-                type: "official",
-                attachments: [
-                    {
-                        id: 1,
-                        name: "despacho_inicial.pdf",
-                        url: "/documents/despacho_inicial.pdf",
-                        type: "application/pdf"
-                    }
-                ],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2023-04-02T14:20:00"
-            },
-            {
-                id: 3,
-                date: "2023-05-10",
-                title: "Contestação Apresentada",
-                text: "A parte ré apresentou contestação refutando os fatos alegados na inicial. Foi solicitada a produção de provas documentais e testemunhais.",
-                type: "official",
-                attachments: [],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2023-05-10T09:15:00"
-            },
-            {
-                id: 4,
-                date: "2023-06-20",
-                title: "Audiência de Conciliação Designada",
-                text: "Foi designada audiência de conciliação para o dia 15/08/2023 às 14h00. Importante sua presença para tentativa de acordo.",
-                type: "official",
-                attachments: [
-                    {
-                        id: 2,
-                        name: "intimacao_audiencia.pdf",
-                        url: "/documents/intimacao_audiencia.pdf",
-                        type: "application/pdf"
-                    }
-                ],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2023-06-20T16:45:00"
-            },
-            {
-                id: 5,
-                date: "2023-08-15",
-                title: "Audiência de Conciliação Realizada",
-                text: "Audiência de conciliação realizada. As partes não chegaram a um acordo. O processo seguirá para a fase de instrução probatória.",
-                type: "official",
-                attachments: [],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2023-08-15T15:30:00"
-            },
-            {
-                id: 6,
-                date: "2024-10-01",
-                title: "Perícia Técnica Deferida",
-                text: "O juízo deferiu a realização de perícia técnica para avaliação dos danos. O perito nomeado entrará em contato para agendar a vistoria.",
-                type: "official",
-                attachments: [
-                    {
-                        id: 3,
-                        name: "despacho_pericia.pdf",
-                        url: "/documents/despacho_pericia.pdf",
-                        type: "application/pdf"
-                    }
-                ],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2024-10-01T11:00:00"
-            }
-        ]
-    },
-    {
-        id: 2,
-        clientId: 1,
-        clientName: "Maria Silva Santos",
-        processNumber: "0007890-12.2024.8.02.0002",
-        actionType: "Revisão de Contrato - Incorporação Imobiliária",
-        court: "3ª Vara Cível da Comarca de Ourinhos",
-        plaintiff: "Maria Silva Santos",
-        defendant: "Construtora Lar Feliz Ltda.",
-        filingDate: "2024-02-10",
-        caseValue: "R$ 250.000,00",
-        subject: "Revisão de cláusulas contratuais abusivas",
-        description: "Ação revisional de cláusulas contratuais abusivas em contrato de compra e venda de imóvel na planta",
-        status: "Em fase de instrução",
-        tags: [
-            "Cível",
-            "Empresarial"
-        ],
-        priority: "media",
-        lastUpdate: "2024-09-28",
-        createdAt: "2024-02-10",
-        timeline: [
-            {
-                id: 1,
-                date: "2024-02-10",
-                title: "Processo Distribuído",
-                text: "Processo distribuído para a 3ª Vara Cível da Comarca de Ourinhos. Petição inicial protocolada com pedido de tutela de urgência.",
-                type: "official",
-                attachments: [],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2024-02-10T09:00:00"
-            },
-            {
-                id: 2,
-                date: "2024-03-05",
-                title: "Tutela de Urgência Deferida",
-                text: "Deferida a tutela de urgência para suspensão das cobranças até decisão final do processo. A construtora foi notificada da decisão.",
-                type: "official",
-                attachments: [
-                    {
-                        id: 4,
-                        name: "decisao_tutela.pdf",
-                        url: "/documents/decisao_tutela.pdf",
-                        type: "application/pdf"
-                    }
-                ],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2024-03-05T13:30:00"
-            },
-            {
-                id: 3,
-                date: "2024-09-28",
-                title: "Juntada de Documentos Complementares",
-                text: "Foram juntados aos autos os documentos complementares solicitados pelo juízo, incluindo extratos bancários e planilha de cálculo dos valores contestados.",
-                type: "official",
-                attachments: [
-                    {
-                        id: 5,
-                        name: "documentos_complementares.pdf",
-                        url: "/documents/documentos_complementares.pdf",
-                        type: "application/pdf"
-                    }
-                ],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2024-09-28T10:15:00"
-            }
-        ]
-    },
-    {
-        id: 3,
-        clientId: 1,
-        clientName: "Maria Silva Santos",
-        processNumber: "0003456-78.2024.8.02.0001",
-        actionType: "Inventário e Partilha de Bens",
-        court: "1º Tabelionato de Notas de Ourinhos",
-        plaintiff: "Maria Silva Santos (Inventariante)",
-        defendant: "N/A",
-        filingDate: "2024-08-01",
-        caseValue: "R$ 800.000,00",
-        subject: "Inventário extrajudicial de bens",
-        description: "Inventário extrajudicial para partilha de bens deixados pelo falecido José Silva Santos",
-        status: "Aguardando documentação",
-        tags: [
-            "Família"
-        ],
-        priority: "baixa",
-        lastUpdate: "2024-09-15",
-        createdAt: "2024-08-01",
-        timeline: [
-            {
-                id: 1,
-                date: "2024-08-01",
-                title: "Processo Iniciado",
-                text: "Processo de inventário iniciado no cartório. Aguardando documentação completa de todos os herdeiros.",
-                type: "official",
-                attachments: [],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2024-08-01T14:00:00"
-            },
-            {
-                id: 2,
-                date: "2024-09-15",
-                title: "Documentação Pendente",
-                text: "Identificamos que ainda faltam os seguintes documentos: certidão de casamento atualizada e documentos pessoais de um dos herdeiros. Por favor, providencie o quanto antes.",
-                type: "comment",
-                attachments: [
-                    {
-                        id: 6,
-                        name: "lista_documentos_pendentes.pdf",
-                        url: "/documents/lista_documentos_pendentes.pdf",
-                        type: "application/pdf"
-                    }
-                ],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2024-09-15T16:20:00"
-            }
-        ]
-    },
-    {
-        id: 4,
-        clientId: 2,
-        clientName: "João Pedro Oliveira",
-        processNumber: "0005678-90.2023.8.02.0003",
-        actionType: "Reclamação Trabalhista - Horas Extras",
-        court: "2ª Vara do Trabalho de Ourinhos",
-        plaintiff: "João Pedro Oliveira",
-        defendant: "Metalúrgica Santos Ltda.",
-        filingDate: "2023-06-20",
-        caseValue: "R$ 35.000,00",
-        subject: "Pagamento de horas extras e adicional noturno",
-        description: "Reclamação trabalhista para pagamento de horas extras não pagas durante o período de vínculo empregatício",
-        status: "Em fase de recurso",
-        tags: [
-            "Trabalhista"
-        ],
-        priority: "urgente",
-        lastUpdate: "2024-09-20",
-        createdAt: "2023-06-20",
-        timeline: [
-            {
-                id: 1,
-                date: "2023-06-20",
-                title: "Reclamação Trabalhista Distribuída",
-                text: "Reclamação trabalhista distribuída na 2ª Vara do Trabalho de Ourinhos. Pedido principal: pagamento de horas extras e adicional noturno.",
-                type: "official",
-                attachments: [],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2023-06-20T11:00:00"
-            },
-            {
-                id: 2,
-                date: "2023-07-15",
-                title: "Audiência Inicial Realizada",
-                text: "Realizada audiência inicial. A empresa apresentou defesa contestando os valores. Processo segue para instrução.",
-                type: "official",
-                attachments: [],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2023-07-15T10:30:00"
-            },
-            {
-                id: 3,
-                date: "2024-03-10",
-                title: "Sentença Publicada - Procedência Parcial",
-                text: "Sentença publicada com procedência parcial dos pedidos. Deferido o pagamento de 70% das horas extras pleiteadas. A empresa foi condenada ao pagamento.",
-                type: "official",
-                attachments: [
-                    {
-                        id: 7,
-                        name: "sentenca.pdf",
-                        url: "/documents/sentenca.pdf",
-                        type: "application/pdf"
-                    }
-                ],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2024-03-10T14:00:00"
-            },
-            {
-                id: 4,
-                date: "2024-09-20",
-                title: "Recurso Ordinário Interposto",
-                text: "A empresa recorrente interpôs recurso ordinário contestando o valor da condenação. Prazo para contrarrazões já foi cumprido. Aguardando julgamento no TRT.",
-                type: "official",
-                attachments: [],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2024-09-20T09:45:00"
-            }
-        ]
-    },
-    {
-        id: 5,
-        clientId: 3,
-        clientName: "Ana Carolina Souza",
-        processNumber: "0002345-67.2024.8.02.0001",
-        actionType: "Divórcio Consensual",
-        court: "1ª Vara de Família da Comarca de Ourinhos",
-        plaintiff: "Ana Carolina Souza",
-        defendant: "Roberto Alves Souza",
-        filingDate: "2024-05-10",
-        caseValue: "R$ 0,00",
-        subject: "Dissolução do vínculo matrimonial e partilha de bens",
-        description: "Processo de divórcio consensual com partilha de bens e acordo sobre guarda dos filhos",
-        status: "Concluído",
-        tags: [
-            "Família"
-        ],
-        priority: "media",
-        lastUpdate: "2024-08-30",
-        createdAt: "2024-05-10",
-        timeline: [
-            {
-                id: 1,
-                date: "2024-05-10",
-                title: "Petição Inicial Protocolada",
-                text: "Petição inicial de divórcio consensual protocolada. Todas as questões já foram acordadas entre as partes.",
-                type: "official",
-                attachments: [],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2024-05-10T10:00:00"
-            },
-            {
-                id: 2,
-                date: "2024-06-20",
-                title: "Audiência de Ratificação Realizada",
-                text: "Realizada audiência onde ambas as partes ratificaram os termos do acordo. Partilha de bens homologada.",
-                type: "official",
-                attachments: [],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2024-06-20T15:00:00"
-            },
-            {
-                id: 3,
-                date: "2024-08-30",
-                title: "Sentença de Divórcio Proferida",
-                text: "Sentença de divórcio proferida e homologada. O processo foi concluído. As certidões já podem ser solicitadas no cartório.",
-                type: "official",
-                attachments: [
-                    {
-                        id: 8,
-                        name: "sentenca_divorcio.pdf",
-                        url: "/documents/sentenca_divorcio.pdf",
-                        type: "application/pdf"
-                    }
-                ],
-                createdBy: "Fabio Candido Pereira",
-                createdAt: "2024-08-30T11:30:00"
-            }
-        ]
-    }
-];
+;
 const useProcessStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zustand$2f$esm$2f$react$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["create"])((set, get)=>({
         // State
         processes: [],
@@ -378,13 +25,18 @@ const useProcessStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node
                 isLoading: true,
                 error: null
             });
-            // No futuro: await api.get(`/processes/user/${userId}`)
-            await new Promise((resolve)=>setTimeout(resolve, 800));
-            const userProcesses = MOCK_PROCESSES.filter((p)=>p.clientId === userId);
-            set({
-                processes: userProcesses,
-                isLoading: false
-            });
+            try {
+                const response = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get('/processes/user');
+                set({
+                    processes: response.processes,
+                    isLoading: false
+                });
+            } catch (error) {
+                set({
+                    error: error.message,
+                    isLoading: false
+                });
+            }
         },
         // Actions para ADMINS
         fetchAllProcesses: async ()=>{
@@ -392,12 +44,18 @@ const useProcessStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node
                 isLoading: true,
                 error: null
             });
-            // No futuro: await api.get('/processes')
-            await new Promise((resolve)=>setTimeout(resolve, 800));
-            set({
-                processes: MOCK_PROCESSES,
-                isLoading: false
-            });
+            try {
+                const response = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get('/processes');
+                set({
+                    processes: response.processes,
+                    isLoading: false
+                });
+            } catch (error) {
+                set({
+                    error: error.message,
+                    isLoading: false
+                });
+            }
         },
         // Buscar processo específico
         fetchProcess: async (processId)=>{
@@ -405,13 +63,18 @@ const useProcessStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node
                 isLoading: true,
                 error: null
             });
-            // No futuro: await api.get(`/processes/${processId}`)
-            await new Promise((resolve)=>setTimeout(resolve, 600));
-            const process = MOCK_PROCESSES.find((p)=>p.id === parseInt(processId));
-            set({
-                selectedProcess: process,
-                isLoading: false
-            });
+            try {
+                const process = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get("/processes/".concat(processId));
+                set({
+                    selectedProcess: process,
+                    isLoading: false
+                });
+            } catch (error) {
+                set({
+                    error: error.message,
+                    isLoading: false
+                });
+            }
         },
         // Busca (admin)
         search: async (term)=>{
@@ -419,21 +82,25 @@ const useProcessStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node
                 isLoading: true,
                 searchTerm: term
             });
-            // No futuro: await api.get(`/processes/search?q=${term}`)
-            await new Promise((resolve)=>setTimeout(resolve, 500));
-            if (!term || term.trim() === "") {
+            try {
+                if (!term || term.trim() === "") {
+                    set({
+                        searchResults: [],
+                        isLoading: false
+                    });
+                    return;
+                }
+                const response = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get("/processes/search?q=".concat(encodeURIComponent(term)));
                 set({
-                    searchResults: [],
+                    searchResults: response.processes,
                     isLoading: false
                 });
-                return;
+            } catch (error) {
+                set({
+                    error: error.message,
+                    isLoading: false
+                });
             }
-            const lowerTerm = term.toLowerCase();
-            const results = MOCK_PROCESSES.filter((p)=>p.processNumber.toLowerCase().includes(lowerTerm) || p.actionType.toLowerCase().includes(lowerTerm) || p.description.toLowerCase().includes(lowerTerm) || p.clientName.toLowerCase().includes(lowerTerm) || p.plaintiff.toLowerCase().includes(lowerTerm) || p.defendant.toLowerCase().includes(lowerTerm) || p.court.toLowerCase().includes(lowerTerm) || p.subject.toLowerCase().includes(lowerTerm));
-            set({
-                searchResults: results,
-                isLoading: false
-            });
         },
         clearSearch: ()=>{
             set({
@@ -446,54 +113,55 @@ const useProcessStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node
             set({
                 isLoading: true
             });
-            // No futuro: await api.post(`/processes/${processId}/export-pdf`)
-            await new Promise((resolve)=>setTimeout(resolve, 500));
-            const process = MOCK_PROCESSES.find((p)=>p.id === processId);
-            if (process) {
-                // Gerar conteúdo do relatório no formato do cliente
-                let reportContent = "RELATÓRIO PROCESSUAL\n\n";
-                reportContent += "DADOS DO PROCESSO:\n";
-                reportContent += "Nº do processo: ".concat(process.processNumber, "\n");
-                reportContent += "Juízo: ".concat(process.court, "\n");
-                reportContent += "Cliente: ".concat(process.clientName, "\n");
-                reportContent += "Réu (parte contrária): ".concat(process.defendant, "\n");
-                reportContent += "Data do ajuizamento: ".concat(new Date(process.filingDate).toLocaleDateString("pt-BR"), "\n");
-                reportContent += "Valor da Causa: ".concat(process.caseValue, "\n");
-                reportContent += "Assunto principal do processo: ".concat(process.subject, "\n\n");
-                reportContent += "Andamentos do processo:\n";
-                // Ordenar timeline por data (do mais antigo para o mais novo)
-                const sortedTimeline = [
-                    ...process.timeline
-                ].sort((a, b)=>new Date(a.date) - new Date(b.date));
-                sortedTimeline.forEach((item)=>{
-                    const formattedDate = new Date(item.date).toLocaleDateString("pt-BR", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric"
+            try {
+                const process = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get("/processes/".concat(processId));
+                if (process) {
+                    let reportContent = "RELATÓRIO PROCESSUAL\n\n";
+                    reportContent += "DADOS DO PROCESSO:\n";
+                    reportContent += "Nº do processo: ".concat(process.processNumber, "\n");
+                    reportContent += "Juízo: ".concat(process.court, "\n");
+                    reportContent += "Cliente: ".concat(process.clientName || 'N/A', "\n");
+                    reportContent += "Réu (parte contrária): ".concat(process.defendant, "\n");
+                    reportContent += "Data do ajuizamento: ".concat(new Date(process.filingDate).toLocaleDateString("pt-BR"), "\n");
+                    reportContent += "Valor da Causa: ".concat(process.caseValue, "\n");
+                    reportContent += "Assunto principal do processo: ".concat(process.subject, "\n\n");
+                    reportContent += "Andamentos do processo:\n";
+                    const sortedTimeline = [
+                        ...process.timeline || []
+                    ].sort((a, b)=>new Date(a.date) - new Date(b.date));
+                    sortedTimeline.forEach((item)=>{
+                        const formattedDate = new Date(item.date).toLocaleDateString("pt-BR", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric"
+                        });
+                        reportContent += "".concat(formattedDate, ": ").concat(item.title, ": ").concat(item.text, "\n");
+                        if (item.attachments && item.attachments.length > 0) {
+                            reportContent += "   Anexos: ".concat(item.attachments.map((a)=>a.name).join(", "), "\n");
+                        }
+                        reportContent += "\n";
                     });
-                    reportContent += "".concat(formattedDate, ": ").concat(item.title, ": ").concat(item.text, "\n");
-                    if (item.attachments && item.attachments.length > 0) {
-                        reportContent += "   Anexos: ".concat(item.attachments.map((a)=>a.name).join(", "), "\n");
-                    }
                     reportContent += "\n";
+                    reportContent += "STATUS ATUAL: ".concat(process.status, "\n");
+                    reportContent += "\nRelatório gerado em: ".concat(new Date().toLocaleDateString("pt-BR"), " às ").concat(new Date().toLocaleTimeString("pt-BR"));
+                    const blob = new Blob([
+                        reportContent
+                    ], {
+                        type: "text/plain;charset=utf-8"
+                    });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "Relatorio_Processual_".concat(process.processNumber.replace(/[^\d]/g, ""), ".txt");
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                }
+            } catch (error) {
+                set({
+                    error: error.message
                 });
-                reportContent += "\n";
-                reportContent += "STATUS ATUAL: ".concat(process.status, "\n");
-                reportContent += "\nRelatório gerado em: ".concat(new Date().toLocaleDateString("pt-BR"), " às ").concat(new Date().toLocaleTimeString("pt-BR"));
-                // Criar e fazer download do arquivo
-                const blob = new Blob([
-                    reportContent
-                ], {
-                    type: "text/plain;charset=utf-8"
-                });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = "Relatorio_Processual_".concat(process.processNumber.replace(/[^\d]/g, ""), ".txt");
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
             }
             set({
                 isLoading: false
@@ -505,36 +173,23 @@ const useProcessStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node
                 isLoading: true,
                 error: null
             });
-            // No futuro: await api.post('/processes', processData)
-            await new Promise((resolve)=>setTimeout(resolve, 1000));
-            const newProcess = {
-                id: MOCK_PROCESSES.length + 1,
-                ...processData,
-                createdAt: new Date().toISOString().split("T")[0],
-                lastUpdate: new Date().toISOString().split("T")[0],
-                timeline: [
-                    {
-                        id: 1,
-                        date: new Date().toISOString().split("T")[0],
-                        title: "Processo Criado",
-                        text: "Processo cadastrado no sistema.",
-                        attachments: [],
-                        createdBy: "Sistema",
-                        createdAt: new Date().toISOString()
-                    }
-                ]
-            };
-            MOCK_PROCESSES.push(newProcess);
-            set({
-                processes: [
-                    ...MOCK_PROCESSES
-                ],
-                isLoading: false
-            });
-            return {
-                success: true,
-                process: newProcess
-            };
+            try {
+                const response = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].post('/processes', processData);
+                await get().fetchAllProcesses();
+                return {
+                    success: true,
+                    process: response.process
+                };
+            } catch (error) {
+                set({
+                    error: error.message,
+                    isLoading: false
+                });
+                return {
+                    success: false,
+                    error: error.message
+                };
+            }
         },
         // Atualizar processo (admin)
         updateProcess: async (processId, updateData)=>{
@@ -542,38 +197,59 @@ const useProcessStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node
                 isLoading: true,
                 error: null
             });
-            // No futuro: await api.put(`/processes/${processId}`, updateData)
-            await new Promise((resolve)=>setTimeout(resolve, 1000));
-            const index = MOCK_PROCESSES.findIndex((p)=>p.id === processId);
-            if (index !== -1) {
-                MOCK_PROCESSES[index] = {
-                    ...MOCK_PROCESSES[index],
-                    ...updateData,
-                    lastUpdate: new Date().toISOString().split("T")[0]
+            try {
+                var _get_selectedProcess;
+                const response = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].put("/processes/".concat(processId), updateData);
+                await get().fetchAllProcesses();
+                if (((_get_selectedProcess = get().selectedProcess) === null || _get_selectedProcess === void 0 ? void 0 : _get_selectedProcess._id) === processId) {
+                    set({
+                        selectedProcess: response.process
+                    });
+                }
+                return {
+                    success: true,
+                    process: response.process
                 };
+            } catch (error) {
                 set({
-                    processes: [
-                        ...MOCK_PROCESSES
-                    ],
+                    error: error.message,
                     isLoading: false
                 });
                 return {
-                    success: true,
-                    process: MOCK_PROCESSES[index]
+                    success: false,
+                    error: error.message
                 };
             }
+        },
+        // Deletar processo (admin)
+        deleteProcess: async (processId)=>{
             set({
-                isLoading: false,
-                error: "Processo não encontrado"
+                isLoading: true,
+                error: null
             });
-            return {
-                success: false,
-                error: "Processo não encontrado"
-            };
+            try {
+                await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].delete("/processes/".concat(processId));
+                await get().fetchAllProcesses();
+                return {
+                    success: true
+                };
+            } catch (error) {
+                set({
+                    error: error.message,
+                    isLoading: false
+                });
+                return {
+                    success: false,
+                    error: error.message
+                };
+            }
         },
         // Buscar processos por cliente
         getProcessesByClient: (clientId)=>{
-            return MOCK_PROCESSES.filter((p)=>p.clientId === clientId);
+            return get().processes.filter((p)=>{
+                var _p_clientId;
+                return p.clientId === clientId || ((_p_clientId = p.clientId) === null || _p_clientId === void 0 ? void 0 : _p_clientId._id) === clientId;
+            });
         },
         // Adicionar andamento a um processo
         addTimeline: async (processId, timelineData)=>{
@@ -581,42 +257,23 @@ const useProcessStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node
                 isLoading: true,
                 error: null
             });
-            // No futuro: await api.post(`/processes/${processId}/timeline`, timelineData)
-            await new Promise((resolve)=>setTimeout(resolve, 800));
-            const process = MOCK_PROCESSES.find((p)=>p.id === processId);
-            if (process) {
-                const newTimeline = {
-                    id: process.timeline.length + 1,
-                    ...timelineData,
-                    date: timelineData.date || new Date().toISOString().split("T")[0],
-                    createdAt: new Date().toISOString(),
-                    attachments: timelineData.attachments || [],
-                    type: timelineData.type || "official"
+            try {
+                const response = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].post("/processes/".concat(processId, "/timeline"), timelineData);
+                await get().fetchProcess(processId);
+                return {
+                    success: true,
+                    timeline: response.timeline
                 };
-                process.timeline.push(newTimeline);
-                process.lastUpdate = new Date().toISOString().split("T")[0];
+            } catch (error) {
                 set({
-                    selectedProcess: {
-                        ...process
-                    },
-                    processes: [
-                        ...MOCK_PROCESSES
-                    ],
+                    error: error.message,
                     isLoading: false
                 });
                 return {
-                    success: true,
-                    timeline: newTimeline
+                    success: false,
+                    error: error.message
                 };
             }
-            set({
-                isLoading: false,
-                error: "Processo não encontrado"
-            });
-            return {
-                success: false,
-                error: "Processo não encontrado"
-            };
         },
         // Deletar andamento de um processo
         deleteTimeline: async (processId, timelineId)=>{
@@ -624,44 +281,22 @@ const useProcessStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node
                 isLoading: true,
                 error: null
             });
-            // No futuro: await api.delete(`/processes/${processId}/timeline/${timelineId}`)
-            await new Promise((resolve)=>setTimeout(resolve, 500));
-            const process = MOCK_PROCESSES.find((p)=>p.id === processId);
-            if (process) {
-                const timelineIndex = process.timeline.findIndex((t)=>t.id === timelineId);
-                if (timelineIndex !== -1) {
-                    process.timeline.splice(timelineIndex, 1);
-                    process.lastUpdate = new Date().toISOString().split("T")[0];
-                    set({
-                        selectedProcess: {
-                            ...process
-                        },
-                        processes: [
-                            ...MOCK_PROCESSES
-                        ],
-                        isLoading: false
-                    });
-                    return {
-                        success: true
-                    };
-                }
+            try {
+                await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].delete("/processes/".concat(processId, "/timeline/").concat(timelineId));
+                await get().fetchProcess(processId);
+                return {
+                    success: true
+                };
+            } catch (error) {
                 set({
-                    isLoading: false,
-                    error: "Andamento não encontrado"
+                    error: error.message,
+                    isLoading: false
                 });
                 return {
                     success: false,
-                    error: "Andamento não encontrado"
+                    error: error.message
                 };
             }
-            set({
-                isLoading: false,
-                error: "Processo não encontrado"
-            });
-            return {
-                success: false,
-                error: "Processo não encontrado"
-            };
         },
         // Atualizar andamento de um processo
         updateTimeline: async (processId, timelineId, timelineData)=>{
@@ -669,57 +304,36 @@ const useProcessStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node
                 isLoading: true,
                 error: null
             });
-            // No futuro: await api.put(`/processes/${processId}/timeline/${timelineId}`, timelineData)
-            await new Promise((resolve)=>setTimeout(resolve, 500));
-            const process = MOCK_PROCESSES.find((p)=>p.id === processId);
-            if (process) {
-                const timelineIndex = process.timeline.findIndex((t)=>t.id === timelineId);
-                if (timelineIndex !== -1) {
-                    process.timeline[timelineIndex] = {
-                        ...process.timeline[timelineIndex],
-                        ...timelineData
-                    };
-                    process.lastUpdate = new Date().toISOString().split("T")[0];
-                    set({
-                        selectedProcess: {
-                            ...process
-                        },
-                        processes: [
-                            ...MOCK_PROCESSES
-                        ],
-                        isLoading: false
-                    });
-                    return {
-                        success: true,
-                        timeline: process.timeline[timelineIndex]
-                    };
-                }
+            try {
+                const response = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].put("/processes/".concat(processId, "/timeline/").concat(timelineId), timelineData);
+                await get().fetchProcess(processId);
+                return {
+                    success: true,
+                    timeline: response.timeline
+                };
+            } catch (error) {
                 set({
-                    isLoading: false,
-                    error: "Andamento não encontrado"
+                    error: error.message,
+                    isLoading: false
                 });
                 return {
                     success: false,
-                    error: "Andamento não encontrado"
+                    error: error.message
                 };
             }
-            set({
-                isLoading: false,
-                error: "Processo não encontrado"
-            });
-            return {
-                success: false,
-                error: "Processo não encontrado"
-            };
         },
         // Stats (admin)
-        getStats: ()=>{
-            const all = MOCK_PROCESSES;
-            return {
-                totalProcesses: all.length,
-                activeProcesses: all.filter((p)=>p.status !== "Concluído").length,
-                completedProcesses: all.filter((p)=>p.status === "Concluído").length
-            };
+        getStats: async ()=>{
+            try {
+                const stats = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get('/processes/stats');
+                return stats;
+            } catch (error) {
+                return {
+                    totalProcesses: 0,
+                    activeProcesses: 0,
+                    completedProcesses: 0
+                };
+            }
         }
     }));
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
@@ -920,20 +534,19 @@ var _s = __turbopack_context__.k.signature();
 const BuscaPage = ()=>{
     _s();
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
-    const { isAuthenticated, isAdmin } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$store$2f$auth$2d$store$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useAuthStore"])();
+    const { isAdmin, user } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$store$2f$auth$2d$store$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useAuthStore"])();
     const { search, searchResults, clearSearch, isLoading } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$store$2f$process$2d$store$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useProcessStore"])();
     const [localSearch, setLocalSearch] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "BuscaPage.useEffect": ()=>{
-            if (!isAuthenticated) {
-                router.push("/login");
-            } else if (!isAdmin()) {
+            if (user && !isAdmin()) {
                 router.push("/dashboard");
             }
         }
     }["BuscaPage.useEffect"], [
-        isAuthenticated,
-        isAdmin
+        router,
+        isAdmin,
+        user
     ]);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "BuscaPage.useEffect": ()=>{
@@ -964,7 +577,7 @@ const BuscaPage = ()=>{
                         children: "Busca de Processos"
                     }, void 0, false, {
                         fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                        lineNumber: 40,
+                        lineNumber: 38,
                         columnNumber: 5
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -972,13 +585,13 @@ const BuscaPage = ()=>{
                         children: "Busque por número do processo, cliente ou palavra-chave"
                     }, void 0, false, {
                         fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                        lineNumber: 41,
+                        lineNumber: 39,
                         columnNumber: 5
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                lineNumber: 39,
+                lineNumber: 37,
                 columnNumber: 4
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -988,7 +601,7 @@ const BuscaPage = ()=>{
                         className: "absolute left-3 top-3 h-4 w-4 text-muted-foreground"
                     }, void 0, false, {
                         fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                        lineNumber: 47,
+                        lineNumber: 45,
                         columnNumber: 5
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -998,13 +611,13 @@ const BuscaPage = ()=>{
                         onChange: (e)=>setLocalSearch(e.target.value)
                     }, void 0, false, {
                         fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                        lineNumber: 48,
+                        lineNumber: 46,
                         columnNumber: 5
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                lineNumber: 46,
+                lineNumber: 44,
                 columnNumber: 4
             }, ("TURBOPACK compile-time value", void 0)),
             isLoading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1014,12 +627,12 @@ const BuscaPage = ()=>{
                     children: "Buscando..."
                 }, void 0, false, {
                     fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                    lineNumber: 58,
+                    lineNumber: 56,
                     columnNumber: 6
                 }, ("TURBOPACK compile-time value", void 0))
             }, void 0, false, {
                 fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                lineNumber: 57,
+                lineNumber: 55,
                 columnNumber: 5
             }, ("TURBOPACK compile-time value", void 0)) : searchResults.length > 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "space-y-2",
@@ -1035,7 +648,7 @@ const BuscaPage = ()=>{
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                        lineNumber: 62,
+                        lineNumber: 60,
                         columnNumber: 6
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1054,7 +667,7 @@ const BuscaPage = ()=>{
                                                         children: process.title
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                                                        lineNumber: 71,
+                                                        lineNumber: 69,
                                                         columnNumber: 12
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardDescription"], {
@@ -1062,7 +675,7 @@ const BuscaPage = ()=>{
                                                         children: process.description
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                                                        lineNumber: 72,
+                                                        lineNumber: 70,
                                                         columnNumber: 12
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1075,20 +688,20 @@ const BuscaPage = ()=>{
                                                                         className: "h-4 w-4"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                                                                        lineNumber: 75,
+                                                                        lineNumber: 73,
                                                                         columnNumber: 14
                                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                         children: process.processNumber
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                                                                        lineNumber: 76,
+                                                                        lineNumber: 74,
                                                                         columnNumber: 14
                                                                     }, ("TURBOPACK compile-time value", void 0))
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                                                                lineNumber: 74,
+                                                                lineNumber: 72,
                                                                 columnNumber: 13
                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1098,20 +711,20 @@ const BuscaPage = ()=>{
                                                                         className: "h-4 w-4"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                                                                        lineNumber: 79,
+                                                                        lineNumber: 77,
                                                                         columnNumber: 14
                                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                         children: process.clientName
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                                                                        lineNumber: 80,
+                                                                        lineNumber: 78,
                                                                         columnNumber: 14
                                                                     }, ("TURBOPACK compile-time value", void 0))
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                                                                lineNumber: 78,
+                                                                lineNumber: 76,
                                                                 columnNumber: 13
                                                             }, ("TURBOPACK compile-time value", void 0)),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1121,7 +734,7 @@ const BuscaPage = ()=>{
                                                                         className: "h-4 w-4"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                                                                        lineNumber: 83,
+                                                                        lineNumber: 81,
                                                                         columnNumber: 14
                                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1131,25 +744,25 @@ const BuscaPage = ()=>{
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                                                                        lineNumber: 84,
+                                                                        lineNumber: 82,
                                                                         columnNumber: 14
                                                                     }, ("TURBOPACK compile-time value", void 0))
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                                                                lineNumber: 82,
+                                                                lineNumber: 80,
                                                                 columnNumber: 13
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                                                        lineNumber: 73,
+                                                        lineNumber: 71,
                                                         columnNumber: 12
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                                                lineNumber: 70,
+                                                lineNumber: 68,
                                                 columnNumber: 11
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1157,34 +770,34 @@ const BuscaPage = ()=>{
                                                 children: process.status
                                             }, void 0, false, {
                                                 fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                                                lineNumber: 88,
+                                                lineNumber: 86,
                                                 columnNumber: 11
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                                        lineNumber: 69,
+                                        lineNumber: 67,
                                         columnNumber: 10
                                     }, ("TURBOPACK compile-time value", void 0))
                                 }, void 0, false, {
                                     fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                                    lineNumber: 68,
+                                    lineNumber: 66,
                                     columnNumber: 9
                                 }, ("TURBOPACK compile-time value", void 0))
                             }, process.id, false, {
                                 fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                                lineNumber: 67,
+                                lineNumber: 65,
                                 columnNumber: 8
                             }, ("TURBOPACK compile-time value", void 0)))
                     }, void 0, false, {
                         fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                        lineNumber: 65,
+                        lineNumber: 63,
                         columnNumber: 6
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                lineNumber: 61,
+                lineNumber: 59,
                 columnNumber: 5
             }, ("TURBOPACK compile-time value", void 0)) : localSearch ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "flex flex-col items-center justify-center h-48 text-center",
@@ -1193,7 +806,7 @@ const BuscaPage = ()=>{
                         className: "h-12 w-12 text-muted-foreground mb-4"
                     }, void 0, false, {
                         fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                        lineNumber: 105,
+                        lineNumber: 103,
                         columnNumber: 6
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1205,13 +818,13 @@ const BuscaPage = ()=>{
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                        lineNumber: 106,
+                        lineNumber: 104,
                         columnNumber: 6
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                lineNumber: 104,
+                lineNumber: 102,
                 columnNumber: 5
             }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "flex flex-col items-center justify-center h-48 text-center",
@@ -1220,7 +833,7 @@ const BuscaPage = ()=>{
                         className: "h-12 w-12 text-muted-foreground mb-4"
                     }, void 0, false, {
                         fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                        lineNumber: 110,
+                        lineNumber: 108,
                         columnNumber: 6
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1228,23 +841,23 @@ const BuscaPage = ()=>{
                         children: "Digite algo para buscar processos"
                     }, void 0, false, {
                         fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                        lineNumber: 111,
+                        lineNumber: 109,
                         columnNumber: 6
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-                lineNumber: 109,
+                lineNumber: 107,
                 columnNumber: 5
             }, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true, {
         fileName: "[project]/app/admin/dashboard/busca/page.jsx",
-        lineNumber: 38,
+        lineNumber: 36,
         columnNumber: 3
     }, ("TURBOPACK compile-time value", void 0));
 };
-_s(BuscaPage, "m4xcuSV5UbPcLaAx1qV2cgmRtMg=", false, function() {
+_s(BuscaPage, "AvDVY2mUJfwgv7fLTVp5LQXtyzA=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"],
         __TURBOPACK__imported__module__$5b$project$5d2f$store$2f$auth$2d$store$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useAuthStore"],
