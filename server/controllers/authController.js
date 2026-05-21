@@ -1,6 +1,6 @@
 import User from "../models/User.js";
 import { generateToken } from "../utils/jwt.js";
-import { comparePassword, hashPassword } from "../utils/password.js";
+import { comparePassword, hashPassword, validatePassword } from "../utils/password.js";
 import { sendPasswordSetupEmail } from "../utils/email.js";
 import crypto from "crypto";
 
@@ -16,12 +16,10 @@ export const login = async (req, res) => {
 		const user = await User.findOne({ email: normalizedEmail });
 
 		if (!user) {
-			console.log(`Usuário não encontrado: ${normalizedEmail}`);
 			return res.status(401).json({ error: "Email ou senha incorretos" });
 		}
 
 		if (!user.password) {
-			console.log(`Usuário sem senha: ${normalizedEmail}`);
 			return res.status(401).json({ error: "Email ou senha incorretos" });
 		}
 
@@ -32,7 +30,6 @@ export const login = async (req, res) => {
 		const isValidPassword = await comparePassword(password, user.password);
 
 		if (!isValidPassword) {
-			console.log(`Senha inválida para: ${normalizedEmail}`);
 			return res.status(401).json({ error: "Email ou senha incorretos" });
 		}
 
@@ -64,6 +61,11 @@ export const setupPassword = async (req, res) => {
 
 		if (!token || !password) {
 			return res.status(400).json({ error: "Token e senha são obrigatórios" });
+		}
+
+		const passwordError = validatePassword(password);
+		if (passwordError) {
+			return res.status(400).json({ error: passwordError });
 		}
 
 		const user = await User.findOne({

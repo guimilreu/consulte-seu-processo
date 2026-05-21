@@ -10,7 +10,7 @@ export default function AuthProvider({ children }) {
 	const hasLoaded = useRef(false);
 
 	useEffect(() => {
-		const publicRoutes = ['/login', '/'];
+		const publicRoutes = ['/login', '/', '/definir-senha'];
 		if (!publicRoutes.includes(pathname) && !user && !hasLoaded.current) {
 			hasLoaded.current = true;
 			loadUser();

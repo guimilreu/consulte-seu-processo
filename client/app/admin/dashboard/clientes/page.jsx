@@ -72,7 +72,11 @@ const ClientesPage = () => {
 		toast.dismiss();
 
 		if (result.success) {
-			toast.success("Cliente cadastrado com sucesso!");
+			if (result.warning) {
+				toast.warning(result.warning);
+			} else {
+				toast.success("Cliente cadastrado com sucesso!");
+			}
 			setFormData({ name: "", email: "", cpf: "", phone: "" });
 			setOpenNewClient(false);
 			await fetchClients();

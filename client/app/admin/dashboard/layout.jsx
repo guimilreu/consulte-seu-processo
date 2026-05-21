@@ -7,7 +7,7 @@ import Navbar from "@/components/layout/Navbar";
 
 const AdminDashboardLayout = ({ children }) => {
 	const router = useRouter();
-	const { isAdmin, user } = useAuthStore();
+	const { isAdmin, user, isLoading } = useAuthStore();
 
 	useEffect(() => {
 		if (user && !isAdmin()) {
@@ -15,12 +15,16 @@ const AdminDashboardLayout = ({ children }) => {
 		}
 	}, [router, isAdmin, user]);
 
-	if (!user) {
+	if (isLoading || !user) {
 		return (
 			<div className="min-h-screen flex items-center justify-center">
 				<p className="text-muted-foreground">Carregando...</p>
 			</div>
 		);
+	}
+
+	if (!isAdmin()) {
+		return null;
 	}
 
 	return (

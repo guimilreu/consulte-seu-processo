@@ -7,6 +7,11 @@ dotenv.config();
 
 const seedAdmin = async () => {
   try {
+    if (process.env.NODE_ENV === 'production' && !process.env.ADMIN_PASSWORD) {
+      console.error('ADMIN_PASSWORD é obrigatório em produção.');
+      process.exit(1);
+    }
+
     await connectDB();
 
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@email.com';

@@ -1,5 +1,5 @@
 import User from '../models/User.js';
-import { hashPassword } from '../utils/password.js';
+import { hashPassword, validatePassword } from '../utils/password.js';
 
 export const getLawyers = async (req, res) => {
   try {
@@ -20,6 +20,11 @@ export const createLawyer = async (req, res) => {
 
     if (!name || !email || !password) {
       return res.status(400).json({ error: 'Nome, email e senha são obrigatórios' });
+    }
+
+    const passwordError = validatePassword(password);
+    if (passwordError) {
+      return res.status(400).json({ error: passwordError });
     }
 
     const existingUser = await User.findOne({ email: email.toLowerCase() });
@@ -73,7 +78,13 @@ export const updateLawyer = async (req, res) => {
     }
 
     if (name) lawyer.name = name;
-    if (password) lawyer.password = await hashPassword(password);
+    if (password) {
+      const passwordError = validatePassword(password);
+      if (passwordError) {
+        return res.status(400).json({ error: passwordError });
+      }
+      lawyer.password = await hashPassword(password);
+    }
 
     await lawyer.save();
 

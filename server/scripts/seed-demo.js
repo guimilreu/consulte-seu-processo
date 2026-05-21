@@ -6,6 +6,11 @@ import { connectDB } from '../lib/db.js';
 
 dotenv.config();
 
+if (process.env.NODE_ENV === 'production') {
+  console.error('seed:demo não pode ser executado em produção.');
+  process.exit(1);
+}
+
 // Dados dos clientes fake
 const clientsData = [
   {

@@ -1,5 +1,12 @@
 import Process from '../models/Process.js';
 import User from '../models/User.js';
+import { escapeRegex } from '../utils/escapeRegex.js';
+
+const ALLOWED_PROCESS_FIELDS = [
+  'clientId', 'processNumber', 'actionType', 'court', 'plaintiff',
+  'defendant', 'filingDate', 'caseValue', 'subject', 'description',
+  'status', 'tags', 'priority',
+];
 
 export const getAllProcesses = async (req, res) => {
   try {
@@ -79,7 +86,7 @@ export const searchProcesses = async (req, res) => {
       return res.json({ processes: [] });
     }
 
-    const searchRegex = new RegExp(q, 'i');
+    const searchRegex = new RegExp(escapeRegex(q.trim()), 'i');
     const processes = await Process.find({
       $or: [
         { processNumber: searchRegex },
@@ -191,8 +198,8 @@ export const updateProcess = async (req, res) => {
       return res.status(404).json({ error: 'Processo não encontrado' });
     }
 
-    Object.keys(updateData).forEach(key => {
-      if (key !== 'timeline' && key !== '_id' && key !== 'createdAt' && key !== 'updatedAt') {
+    ALLOWED_PROCESS_FIELDS.forEach((key) => {
+      if (updateData[key] !== undefined) {
         process[key] = updateData[key];
       }
     });

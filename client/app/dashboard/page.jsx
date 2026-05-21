@@ -13,7 +13,7 @@ import ProcessViewDialog from "@/components/process/ProcessViewDialog";
 const Dashboard = () => {
 	const router = useRouter();
 	const { user } = useAuthStore();
-	const { processes, fetchMyProcesses, fetchProcess, isLoading } = useProcessStore();
+	const { processes, fetchMyProcesses, fetchProcess, isLoading, error } = useProcessStore();
 	const [openViewDialog, setOpenViewDialog] = useState(false);
 	const [selectedProcess, setSelectedProcess] = useState(null);
 
@@ -66,6 +66,19 @@ const Dashboard = () => {
 			<div className="flex items-center justify-center h-96">
 				<div className="text-center">
 					<p className="text-muted-foreground">Carregando...</p>
+				</div>
+			</div>
+		);
+	}
+
+	if (error) {
+		return (
+			<div className="flex items-center justify-center h-96">
+				<div className="text-center">
+					<p className="text-destructive mb-2">{error}</p>
+					<Button onClick={() => user && fetchMyProcesses(user._id || user.id)}>
+						Tentar novamente
+					</Button>
 				</div>
 			</div>
 		);

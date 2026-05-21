@@ -1,6 +1,5 @@
 import User from '../models/User.js';
 import Process from '../models/Process.js';
-import { generateToken } from '../utils/jwt.js';
 import { sendPasswordSetupEmail } from '../utils/email.js';
 import crypto from 'crypto';
 
@@ -78,10 +77,12 @@ export const createClient = async (req, res) => {
 
     await client.save();
 
+    let emailSent = true;
     try {
       await sendPasswordSetupEmail(client.email, client.name, passwordSetupToken);
     } catch (emailError) {
       console.error('Erro ao enviar email:', emailError);
+      emailSent = false;
     }
 
     const { password, passwordSetupToken: token, passwordSetupExpires: expires, ...clientWithoutSensitive } = client.toObject();
@@ -89,6 +90,8 @@ export const createClient = async (req, res) => {
     res.status(201).json({
       success: true,
       client: clientWithoutSensitive,
+      emailSent,
+      ...(emailSent ? {} : { warning: 'Cliente criado, mas o e-mail de definição de senha não foi enviado.' }),
     });
   } catch (error) {
     console.error('Erro ao criar cliente:', error);

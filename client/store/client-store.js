@@ -26,7 +26,7 @@ export const useClientStore = create((set, get) => ({
 		try {
 			const response = await api.post('/clients', clientData);
 			await get().fetchClients();
-			return { success: true, client: response.client };
+			return { success: true, client: response.client, warning: response.warning };
 		} catch (error) {
 			set({ error: error.message, isLoading: false });
 			return { success: false, error: error.message };

@@ -43,7 +43,7 @@ const LoginPage = () => {
 	return (
 		<div className="min-h-screen flex items-center justify-center p-4">
 			<div className="w-full max-w-md flex flex-col gap-4">
-				<img src="/logo-1.png" alt="Logo" className="h-16 mx-auto mb-2" />
+				<img src="/logo-1.svg" alt="Consulte seu Processo" className="h-16 mx-auto mb-2" />
 
 				<Card>
 					<CardHeader>
