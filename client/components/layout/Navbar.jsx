@@ -68,7 +68,7 @@ const Navbar = () => {
 				{/* Logo */}
 				<div className="mr-8 flex items-center">
 					<Link href={homeLink} className="flex items-center space-x-2">
-						<img src="/logo-2.svg" alt="Consulte seu Processo" className="h-14" />
+						<img src="/logo-2.png" alt="Logo" className="h-14" />
 					</Link>
 				</div>
 
