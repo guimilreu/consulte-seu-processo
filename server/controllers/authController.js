@@ -1,8 +1,7 @@
 import User from "../models/User.js";
 import { generateToken } from "../utils/jwt.js";
 import { comparePassword, hashPassword, validatePassword } from "../utils/password.js";
-import { sendPasswordSetupEmail } from "../utils/email.js";
-import crypto from "crypto";
+import { getAuthCookieOptions } from "../utils/cookieOptions.js";
 
 export const login = async (req, res) => {
 	try {
@@ -37,13 +36,7 @@ export const login = async (req, res) => {
 
 		const { password: _, passwordSetupToken, passwordSetupExpires, ...userWithoutPassword } = user.toObject();
 
-		res.cookie("token", token, {
-			httpOnly: true,
-			secure: process.env.NODE_ENV === "production",
-			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dias
-			domain: process.env.COOKIE_DOMAIN || undefined,
-		});
+		res.cookie("token", token, getAuthCookieOptions());
 
 		res.json({
 			success: true,
@@ -86,13 +79,7 @@ export const setupPassword = async (req, res) => {
 
 		const { password: _, passwordSetupToken, passwordSetupExpires, ...userWithoutPassword } = user.toObject();
 
-		res.cookie("token", jwtToken, {
-			httpOnly: true,
-			secure: process.env.NODE_ENV === "production",
-			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dias
-			domain: process.env.COOKIE_DOMAIN || undefined,
-		});
+		res.cookie("token", jwtToken, getAuthCookieOptions());
 
 		res.json({
 			success: true,
@@ -105,12 +92,8 @@ export const setupPassword = async (req, res) => {
 };
 
 export const logout = async (req, res) => {
-	res.clearCookie("token", {
-		httpOnly: true,
-		secure: process.env.NODE_ENV === "production",
-		sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-		domain: process.env.COOKIE_DOMAIN || undefined,
-	});
+	const { maxAge, ...clearOptions } = getAuthCookieOptions();
+	res.clearCookie("token", clearOptions);
 	res.json({ success: true });
 };
 

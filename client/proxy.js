@@ -1,25 +1,11 @@
 import { NextResponse } from 'next/server';
 
-const PUBLIC_ROUTES = ['/', '/login', '/definir-senha'];
+// Autenticação é feita via cookie httpOnly na API (domínio compartilhado)
+// e validada no client + API. O proxy não bloqueia rotas por cookie,
+// pois em setups cross-subdomain (app.* / api.*) o cookie pode não estar
+// visível aqui mesmo com o usuário autenticado.
 
-export function proxy(request) {
-  const { pathname } = request.nextUrl;
-  const token = request.cookies.get('token');
-  const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
-  const isAdminRoute = pathname.startsWith('/admin');
-
-  if (isPublicRoute && token) {
-    return NextResponse.redirect(new URL('/', request.url));
-  }
-
-  if (!isPublicRoute && !token) {
-    return NextResponse.redirect(new URL('/login', request.url));
-  }
-
-  if (isAdminRoute && !token) {
-    return NextResponse.redirect(new URL('/login', request.url));
-  }
-
+export function proxy() {
   return NextResponse.next();
 }
 
