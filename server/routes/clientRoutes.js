@@ -1,5 +1,5 @@
 import express from 'express';
-import { getClients, getClient, createClient, updateClient, deleteClient, getClientStats } from '../controllers/clientController.js';
+import { getClients, getClient, createClient, updateClient, deleteClient, getClientStats, resendPasswordSetupEmail } from '../controllers/clientController.js';
 import { authenticate } from '../middleware/authMiddleware.js';
 import { requireAdmin } from '../middleware/adminMiddleware.js';
 
@@ -9,6 +9,7 @@ router.get('/stats', authenticate, requireAdmin, getClientStats);
 router.get('/', authenticate, requireAdmin, getClients);
 router.get('/:id', authenticate, requireAdmin, getClient);
 router.post('/', authenticate, requireAdmin, createClient);
+router.post('/:id/resend-password-email', authenticate, requireAdmin, resendPasswordSetupEmail);
 router.put('/:id', authenticate, requireAdmin, updateClient);
 router.delete('/:id', authenticate, requireAdmin, deleteClient);
 

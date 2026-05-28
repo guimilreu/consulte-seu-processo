@@ -3,19 +3,53 @@ import Process from '../models/Process.js';
 import { sendPasswordSetupEmail } from '../utils/email.js';
 import crypto from 'crypto';
 
+function formatClientResponse(client, processCount) {
+  const { password, passwordSetupToken, passwordSetupExpires, ...clientWithoutSensitive } = client.toObject();
+
+  return {
+    ...clientWithoutSensitive,
+    processCount,
+    passwordPending: !password,
+  };
+}
+
+function generatePasswordSetupCredentials() {
+  const passwordSetupToken = crypto.randomBytes(32).toString('hex');
+  const passwordSetupExpires = new Date();
+  passwordSetupExpires.setDate(passwordSetupExpires.getDate() + 7);
+
+  return { passwordSetupToken, passwordSetupExpires };
+}
+
+async function trySendPasswordSetupEmail(client) {
+  try {
+    await sendPasswordSetupEmail(client.email, client.name, client.passwordSetupToken);
+    return { emailSent: true };
+  } catch (emailError) {
+    console.error('Erro ao enviar email:', emailError.message);
+    if (emailError.response) {
+      console.error('Resposta SMTP:', emailError.response);
+    }
+    if (emailError.code) {
+      console.error('Código SMTP:', emailError.code);
+    }
+    return {
+      emailSent: false,
+      warning: 'Cliente criado, mas o e-mail de definição de senha não foi enviado.',
+    };
+  }
+}
+
 export const getClients = async (req, res) => {
   try {
     const clients = await User.find({ role: 'client' })
-      .select('-password -passwordSetupToken -passwordSetupExpires')
+      .select('-passwordSetupToken -passwordSetupExpires')
       .sort({ createdAt: -1 });
 
     const clientsWithProcessCount = await Promise.all(
       clients.map(async (client) => {
         const processCount = await Process.countDocuments({ clientId: client._id });
-        return {
-          ...client.toObject(),
-          processCount,
-        };
+        return formatClientResponse(client, processCount);
       })
     );
 
@@ -30,7 +64,7 @@ export const getClient = async (req, res) => {
   try {
     const { id } = req.params;
     const client = await User.findOne({ _id: id, role: 'client' })
-      .select('-password -passwordSetupToken -passwordSetupExpires');
+      .select('-passwordSetupToken -passwordSetupExpires');
 
     if (!client) {
       return res.status(404).json({ error: 'Cliente não encontrado' });
@@ -38,10 +72,7 @@ export const getClient = async (req, res) => {
 
     const processCount = await Process.countDocuments({ clientId: client._id });
 
-    res.json({
-      ...client.toObject(),
-      processCount,
-    });
+    res.json(formatClientResponse(client, processCount));
   } catch (error) {
     console.error('Erro ao buscar cliente:', error);
     res.status(500).json({ error: 'Erro ao buscar cliente' });
@@ -61,9 +92,7 @@ export const createClient = async (req, res) => {
       return res.status(400).json({ error: 'Email já cadastrado' });
     }
 
-    const passwordSetupToken = crypto.randomBytes(32).toString('hex');
-    const passwordSetupExpires = new Date();
-    passwordSetupExpires.setDate(passwordSetupExpires.getDate() + 7);
+    const passwordSetupCredentials = generatePasswordSetupCredentials();
 
     const client = new User({
       name,
@@ -71,27 +100,18 @@ export const createClient = async (req, res) => {
       cpf,
       phone,
       role: 'client',
-      passwordSetupToken,
-      passwordSetupExpires,
+      ...passwordSetupCredentials,
     });
 
     await client.save();
 
-    let emailSent = true;
-    try {
-      await sendPasswordSetupEmail(client.email, client.name, passwordSetupToken);
-    } catch (emailError) {
-      console.error('Erro ao enviar email:', emailError);
-      emailSent = false;
-    }
-
-    const { password, passwordSetupToken: token, passwordSetupExpires: expires, ...clientWithoutSensitive } = client.toObject();
+    const emailResult = await trySendPasswordSetupEmail(client);
 
     res.status(201).json({
       success: true,
-      client: clientWithoutSensitive,
-      emailSent,
-      ...(emailSent ? {} : { warning: 'Cliente criado, mas o e-mail de definição de senha não foi enviado.' }),
+      client: formatClientResponse(client, 0),
+      emailSent: emailResult.emailSent,
+      ...(emailResult.warning ? { warning: emailResult.warning } : {}),
     });
   } catch (error) {
     console.error('Erro ao criar cliente:', error);
@@ -131,7 +151,10 @@ export const updateClient = async (req, res) => {
 
     res.json({
       success: true,
-      client: clientWithoutSensitive,
+      client: {
+        ...clientWithoutSensitive,
+        passwordPending: !password,
+      },
     });
   } catch (error) {
     console.error('Erro ao atualizar cliente:', error);
@@ -139,6 +162,40 @@ export const updateClient = async (req, res) => {
       return res.status(400).json({ error: 'Email já cadastrado' });
     }
     res.status(500).json({ error: 'Erro ao atualizar cliente' });
+  }
+};
+
+export const resendPasswordSetupEmail = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const client = await User.findOne({ _id: id, role: 'client' });
+
+    if (!client) {
+      return res.status(404).json({ error: 'Cliente não encontrado' });
+    }
+
+    if (client.password) {
+      return res.status(400).json({ error: 'Cliente já definiu a senha' });
+    }
+
+    Object.assign(client, generatePasswordSetupCredentials());
+    await client.save();
+
+    const emailResult = await trySendPasswordSetupEmail(client);
+
+    if (!emailResult.emailSent) {
+      return res.status(502).json({
+        error: 'Não foi possível enviar o e-mail. Verifique a configuração SMTP do servidor.',
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'E-mail de definição de senha reenviado com sucesso.',
+    });
+  } catch (error) {
+    console.error('Erro ao reenviar email de definição de senha:', error);
+    res.status(500).json({ error: 'Erro ao reenviar e-mail de definição de senha' });
   }
 };
 

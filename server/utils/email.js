@@ -1,20 +1,39 @@
 import nodemailer from 'nodemailer';
 
-const emailPort = Number(process.env.EMAIL_PORT) || 587;
+let transporter;
 
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: emailPort,
-  secure: emailPort === 465,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+function getTransporter() {
+  if (!transporter) {
+    const emailPort = Number(process.env.EMAIL_PORT) || 587;
+    const secure = process.env.EMAIL_SECURE === 'true' || emailPort === 465;
+
+    transporter = nodemailer.createTransport({
+      host: process.env.EMAIL_HOST,
+      port: emailPort,
+      secure,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+      tls: {
+        rejectUnauthorized: process.env.EMAIL_TLS_REJECT_UNAUTHORIZED !== 'false',
+      },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 15000,
+    });
+  }
+
+  return transporter;
+}
+
+export async function verifyEmailConnection() {
+  await getTransporter().verify();
+}
 
 export const sendPasswordSetupEmail = async (email, name, token) => {
   const setupUrl = `${process.env.FRONTEND_URL}/definir-senha?token=${token}`;
-  
+
   const mailOptions = {
     from: process.env.EMAIL_FROM,
     to: email,
@@ -30,6 +49,7 @@ export const sendPasswordSetupEmail = async (email, name, token) => {
     `,
   };
 
-  return transporter.sendMail(mailOptions);
+  const info = await getTransporter().sendMail(mailOptions);
+  console.log(`E-mail de definição de senha enviado para ${email} (messageId: ${info.messageId})`);
+  return info;
 };
-

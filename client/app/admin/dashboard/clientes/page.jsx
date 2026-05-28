@@ -28,7 +28,7 @@ import EmptyState from "@/components/ui/empty-state";
 const ClientesPage = () => {
 	const router = useRouter();
 	const { isAdmin, user } = useAuthStore();
-	const { clients, fetchClients, addClient, updateClient, deleteClient, isLoading } = useClientStore();
+	const { clients, fetchClients, addClient, updateClient, deleteClient, resendPasswordEmail, isLoading } = useClientStore();
 	const { processes, fetchAllProcesses, getProcessesByClient } = useProcessStore();
 	
 	// Estados para Dialog de Novo Cliente
@@ -75,13 +75,31 @@ const ClientesPage = () => {
 			if (result.warning) {
 				toast.warning(result.warning);
 			} else {
-				toast.success("Cliente cadastrado com sucesso!");
+				toast.success("Cliente cadastrado! E-mail de definição de senha enviado.");
 			}
 			setFormData({ name: "", email: "", cpf: "", phone: "" });
 			setOpenNewClient(false);
 			await fetchClients();
 		} else {
 			toast.error("Erro ao cadastrar cliente. Tente novamente.");
+		}
+	};
+
+	const handleResendPasswordEmail = async (client) => {
+		const clientId = client._id || client.id;
+		if (!clientId) {
+			toast.error("ID do cliente não encontrado.");
+			return;
+		}
+
+		toast.loading("Reenviando e-mail...");
+		const result = await resendPasswordEmail(clientId);
+		toast.dismiss();
+
+		if (result.success) {
+			toast.success(result.message || "E-mail reenviado com sucesso!");
+		} else {
+			toast.error(result.error || "Erro ao reenviar e-mail. Verifique a configuração SMTP.");
 		}
 	};
 
@@ -268,7 +286,12 @@ const ClientesPage = () => {
 							<CardHeader>
 								<div className="flex items-start justify-between">
 									<div className="flex-1">
-										<CardTitle className="text-lg mb-3">{client.name}</CardTitle>
+										<div className="flex items-center gap-2 mb-3">
+											<CardTitle className="text-lg">{client.name}</CardTitle>
+											{client.passwordPending && (
+												<Badge variant="secondary">Aguardando senha</Badge>
+											)}
+										</div>
 										<div className="grid grid-cols-2 gap-3 text-sm">
 											<div className="flex items-center gap-2 text-muted-foreground">
 												<Mail className="h-4 w-4" />
@@ -291,7 +314,17 @@ const ClientesPage = () => {
 											</div>
 										</div>
 									</div>
-									<div className="flex gap-2">
+									<div className="flex gap-2 flex-wrap">
+										{client.passwordPending && (
+											<Button
+												variant="outline"
+												size="sm"
+												onClick={() => handleResendPasswordEmail(client)}
+											>
+												<Mail className="h-4 w-4 mr-1" />
+												Reenviar e-mail
+											</Button>
+										)}
 										<Button
 											variant="outline"
 											size="sm"

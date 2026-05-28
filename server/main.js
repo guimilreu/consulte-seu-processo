@@ -1,6 +1,6 @@
+import "./loadEnv.js";
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
@@ -12,8 +12,8 @@ import clientRoutes from "./routes/clientRoutes.js";
 import processRoutes from "./routes/processRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import { notFoundHandler, errorHandler } from "./middleware/errorHandler.js";
+import { verifyEmailConnection } from "./utils/email.js";
 
-dotenv.config();
 validateEnv();
 
 const app = express();
@@ -63,7 +63,16 @@ app.get("/health", async (req, res) => {
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-connectDB().then(() => {
+connectDB().then(async () => {
+	if (process.env.NODE_ENV === "production") {
+		try {
+			await verifyEmailConnection();
+			console.log("Conexão SMTP verificada com sucesso");
+		} catch (error) {
+			console.error("Falha na verificação SMTP:", error.message);
+		}
+	}
+
 	app.listen(PORT, () => {
 		console.log(`Servidor rodando na porta ${PORT}`);
 	});

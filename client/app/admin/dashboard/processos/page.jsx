@@ -438,12 +438,20 @@ const ProcessosPage = () => {
 		setOpenManageProcess(true);
 	};
 
+	const getProcessId = (process) => process?._id || process?.id;
+
 	const handleUpdateProcess = async (e) => {
 		e.preventDefault();
 		if (!selectedProcess) return;
 
+		const processId = getProcessId(selectedProcess);
+		if (!processId) {
+			toast.error("ID do processo não encontrado.");
+			return;
+		}
+
 		toast.loading("Salvando alterações...");
-		const result = await updateProcess(selectedProcess.id, editForm);
+		const result = await updateProcess(processId, editForm);
 		toast.dismiss();
 
 		if (result.success) {
@@ -459,8 +467,14 @@ const ProcessosPage = () => {
 		e.preventDefault();
 		if (!selectedProcess) return;
 
+		const processId = getProcessId(selectedProcess);
+		if (!processId) {
+			toast.error("ID do processo não encontrado.");
+			return;
+		}
+
 		toast.loading("Adicionando andamento...");
-		const result = await addTimeline(selectedProcess.id, timelineForm);
+		const result = await addTimeline(processId, timelineForm);
 		toast.dismiss();
 
 		if (result.success) {
@@ -473,8 +487,10 @@ const ProcessosPage = () => {
 				createdBy: "Administrador",
 				attachments: [],
 			});
-			// Atualizar o processo selecionado com o novo timeline
-			const updatedProcess = processes.find((p) => p.id === selectedProcess.id);
+			await fetchAllProcesses();
+			const updatedProcess = useProcessStore.getState().processes.find(
+				(p) => getProcessId(p)?.toString() === processId.toString()
+			);
 			if (updatedProcess) {
 				setSelectedProcess(updatedProcess);
 			}
@@ -499,15 +515,24 @@ const ProcessosPage = () => {
 		e.preventDefault();
 		if (!selectedProcess || !editingTimeline) return;
 
+		const processId = getProcessId(selectedProcess);
+		const timelineId = getProcessId(editingTimeline);
+		if (!processId || !timelineId) {
+			toast.error("ID do processo ou andamento não encontrado.");
+			return;
+		}
+
 		toast.loading("Salvando alterações...");
-		const result = await updateTimeline(selectedProcess.id, editingTimeline.id, editTimelineForm);
+		const result = await updateTimeline(processId, timelineId, editTimelineForm);
 		toast.dismiss();
 
 		if (result.success) {
 			toast.success("Andamento atualizado com sucesso!");
 			setOpenEditTimeline(false);
-			// Atualizar o processo selecionado
-			const updatedProcess = processes.find((p) => p.id === selectedProcess.id);
+			await fetchAllProcesses();
+			const updatedProcess = useProcessStore.getState().processes.find(
+				(p) => getProcessId(p)?.toString() === processId.toString()
+			);
 			if (updatedProcess) {
 				setSelectedProcess(updatedProcess);
 			}
@@ -524,14 +549,23 @@ const ProcessosPage = () => {
 	const handleDeleteTimeline = async () => {
 		if (!selectedProcess || !timelineToDelete) return;
 
+		const processId = getProcessId(selectedProcess);
+		const timelineId = getProcessId(timelineToDelete);
+		if (!processId || !timelineId) {
+			toast.error("ID do processo ou andamento não encontrado.");
+			return;
+		}
+
 		toast.loading("Deletando andamento...");
-		const result = await deleteTimeline(selectedProcess.id, timelineToDelete.id);
+		const result = await deleteTimeline(processId, timelineId);
 		toast.dismiss();
 
 		if (result.success) {
 			toast.success("Andamento deletado com sucesso!");
-			// Atualizar o processo selecionado
-			const updatedProcess = processes.find((p) => p.id === selectedProcess.id);
+			await fetchAllProcesses();
+			const updatedProcess = useProcessStore.getState().processes.find(
+				(p) => getProcessId(p)?.toString() === processId.toString()
+			);
 			if (updatedProcess) {
 				setSelectedProcess(updatedProcess);
 			}
@@ -1674,7 +1708,7 @@ const ProcessosPage = () => {
 											<Label className="mb-3 block">Andamentos Anteriores</Label>
 											<div className="space-y-3 max-h-60 overflow-y-auto">
 												{[...selectedProcess.timeline].reverse().map((item, index) => (
-													<div key={item.id} className="border-l-2 border-primary pl-4 pb-3">
+													<div key={getProcessId(item) || index} className="border-l-2 border-primary pl-4 pb-3">
 														<div className="flex items-start justify-between">
 															<div className="flex-1">
 																<p className="font-medium text-sm">{item.title}</p>

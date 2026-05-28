@@ -26,10 +26,28 @@ export const useClientStore = create((set, get) => ({
 		try {
 			const response = await api.post('/clients', clientData);
 			await get().fetchClients();
-			return { success: true, client: response.client, warning: response.warning };
+			return {
+				success: true,
+				client: response.client,
+				emailSent: response.emailSent,
+				warning: response.warning,
+			};
 		} catch (error) {
 			set({ error: error.message, isLoading: false });
 			return { success: false, error: error.message };
+		}
+	},
+
+	resendPasswordEmail: async (clientId) => {
+		set({ isLoading: true, error: null });
+		try {
+			const response = await api.post(`/clients/${clientId}/resend-password-email`);
+			return { success: true, message: response.message };
+		} catch (error) {
+			set({ error: error.message, isLoading: false });
+			return { success: false, error: error.message };
+		} finally {
+			set({ isLoading: false });
 		}
 	},
 

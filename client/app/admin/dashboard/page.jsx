@@ -224,7 +224,7 @@ const AdminDashboard = () => {
 	const recentActivity = processes.flatMap(p => 
 		p.timeline?.map(t => ({
 			...t,
-			processId: p.id,
+			processId: p._id || p.id,
 			processNumber: p.processNumber,
 			actionType: p.actionType,
 		})) || []
