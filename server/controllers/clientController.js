@@ -1,6 +1,6 @@
 import User from '../models/User.js';
 import Process from '../models/Process.js';
-import { sendPasswordSetupEmail } from '../utils/email.js';
+import { buildPasswordSetupUrl, sendPasswordSetupEmail } from '../utils/email.js';
 import crypto from 'crypto';
 
 function formatClientResponse(client, processCount) {
@@ -162,6 +162,35 @@ export const updateClient = async (req, res) => {
       return res.status(400).json({ error: 'Email já cadastrado' });
     }
     res.status(500).json({ error: 'Erro ao atualizar cliente' });
+  }
+};
+
+export const getPasswordSetupLink = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const client = await User.findOne({ _id: id, role: 'client' });
+
+    if (!client) {
+      return res.status(404).json({ error: 'Cliente não encontrado' });
+    }
+
+    if (client.password) {
+      return res.status(400).json({ error: 'Cliente já definiu a senha' });
+    }
+
+    const tokenExpired = !client.passwordSetupExpires || client.passwordSetupExpires <= new Date();
+    if (!client.passwordSetupToken || tokenExpired) {
+      Object.assign(client, generatePasswordSetupCredentials());
+      await client.save();
+    }
+
+    res.json({
+      success: true,
+      setupUrl: buildPasswordSetupUrl(client.passwordSetupToken),
+    });
+  } catch (error) {
+    console.error('Erro ao gerar link de definição de senha:', error);
+    res.status(500).json({ error: 'Erro ao gerar link de definição de senha' });
   }
 };
 

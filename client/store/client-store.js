@@ -38,6 +38,15 @@ export const useClientStore = create((set, get) => ({
 		}
 	},
 
+	getPasswordSetupLink: async (clientId) => {
+		try {
+			const response = await api.get(`/clients/${clientId}/password-setup-link`);
+			return { success: true, setupUrl: response.setupUrl };
+		} catch (error) {
+			return { success: false, error: error.message };
+		}
+	},
+
 	resendPasswordEmail: async (clientId) => {
 		set({ isLoading: true, error: null });
 		try {

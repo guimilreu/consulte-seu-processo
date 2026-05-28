@@ -21,14 +21,14 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Mail, Phone, User, FileText, Calendar, Eye, Edit, Trash2, Users } from "lucide-react";
+import { Plus, Mail, Phone, User, FileText, Calendar, Eye, Edit, Trash2, Users, Link2 } from "lucide-react";
 import ConfirmationDialog from "@/components/ui/confirmation-dialog";
 import EmptyState from "@/components/ui/empty-state";
 
 const ClientesPage = () => {
 	const router = useRouter();
 	const { isAdmin, user } = useAuthStore();
-	const { clients, fetchClients, addClient, updateClient, deleteClient, resendPasswordEmail, isLoading } = useClientStore();
+	const { clients, fetchClients, addClient, updateClient, deleteClient, resendPasswordEmail, getPasswordSetupLink, isLoading } = useClientStore();
 	const { processes, fetchAllProcesses, getProcessesByClient } = useProcessStore();
 	
 	// Estados para Dialog de Novo Cliente
@@ -82,6 +82,33 @@ const ClientesPage = () => {
 			await fetchClients();
 		} else {
 			toast.error("Erro ao cadastrar cliente. Tente novamente.");
+		}
+	};
+
+	const handleCopyPasswordSetupLink = async (client) => {
+		const clientId = client._id || client.id;
+		if (!clientId) {
+			toast.error("ID do cliente não encontrado.");
+			return;
+		}
+
+		toast.loading("Gerando link...");
+		const result = await getPasswordSetupLink(clientId);
+		toast.dismiss();
+
+		if (!result.success || !result.setupUrl) {
+			toast.error(result.error || "Erro ao gerar link de definição de senha.");
+			return;
+		}
+
+		try {
+			await navigator.clipboard.writeText(result.setupUrl);
+			toast.success("Link copiado! Envie manualmente ao cliente (WhatsApp, etc.).");
+		} catch {
+			toast.message("Copie o link manualmente:", {
+				description: result.setupUrl,
+				duration: 15000,
+			});
 		}
 	};
 
@@ -316,14 +343,24 @@ const ClientesPage = () => {
 									</div>
 									<div className="flex gap-2 flex-wrap">
 										{client.passwordPending && (
-											<Button
-												variant="outline"
-												size="sm"
-												onClick={() => handleResendPasswordEmail(client)}
-											>
-												<Mail className="h-4 w-4 mr-1" />
-												Reenviar e-mail
-											</Button>
+											<>
+												<Button
+													variant="outline"
+													size="sm"
+													onClick={() => handleCopyPasswordSetupLink(client)}
+												>
+													<Link2 className="h-4 w-4 mr-1" />
+													Copiar link
+												</Button>
+												<Button
+													variant="outline"
+													size="sm"
+													onClick={() => handleResendPasswordEmail(client)}
+												>
+													<Mail className="h-4 w-4 mr-1" />
+													Reenviar e-mail
+												</Button>
+											</>
 										)}
 										<Button
 											variant="outline"
