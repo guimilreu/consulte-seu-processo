@@ -1,6 +1,6 @@
 const REQUIRED = {
   all: ['MONGODB_URI', 'JWT_SECRET'],
-  production: ['FRONTEND_URL', 'EMAIL_HOST', 'EMAIL_PORT', 'EMAIL_USER', 'EMAIL_PASS', 'EMAIL_FROM'],
+  production: ['FRONTEND_URL', 'RESEND_API_KEY', 'EMAIL_FROM'],
 };
 
 export function validateEnv() {

@@ -126,7 +126,7 @@ const ClientesPage = () => {
 		if (result.success) {
 			toast.success(result.message || "E-mail reenviado com sucesso!");
 		} else {
-			toast.error(result.error || "Erro ao reenviar e-mail. Verifique a configuração SMTP.");
+			toast.error(result.error || "Erro ao reenviar e-mail. Verifique a configuração do Resend.");
 		}
 	};
 

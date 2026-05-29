@@ -67,9 +67,9 @@ connectDB().then(async () => {
 	if (process.env.NODE_ENV === "production") {
 		try {
 			await verifyEmailConnection();
-			console.log("Conexão SMTP verificada com sucesso");
+			console.log("Resend verificado com sucesso");
 		} catch (error) {
-			console.error("Falha na verificação SMTP:", error.message);
+			console.error("Falha na verificação do Resend:", error.message);
 		}
 	}
 

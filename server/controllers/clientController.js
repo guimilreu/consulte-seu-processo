@@ -26,13 +26,7 @@ async function trySendPasswordSetupEmail(client) {
     await sendPasswordSetupEmail(client.email, client.name, client.passwordSetupToken);
     return { emailSent: true };
   } catch (emailError) {
-    console.error('Erro ao enviar email:', emailError.message);
-    if (emailError.response) {
-      console.error('Resposta SMTP:', emailError.response);
-    }
-    if (emailError.code) {
-      console.error('Código SMTP:', emailError.code);
-    }
+    console.error('Erro ao enviar email via Resend:', emailError.message);
     return {
       emailSent: false,
       warning: 'Cliente criado, mas o e-mail de definição de senha não foi enviado.',
@@ -214,7 +208,7 @@ export const resendPasswordSetupEmail = async (req, res) => {
 
     if (!emailResult.emailSent) {
       return res.status(502).json({
-        error: 'Não foi possível enviar o e-mail. Verifique a configuração SMTP do servidor.',
+        error: 'Não foi possível enviar o e-mail. Verifique a configuração do Resend.',
       });
     }
 
