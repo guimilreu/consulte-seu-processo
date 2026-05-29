@@ -52,6 +52,10 @@ export async function verifyEmailConnection() {
   const { data, error } = await getResendClient().domains.list();
 
   if (error) {
+    if (error.message?.includes('restricted to only send emails')) {
+      console.log('Resend configurado (API key com permissão apenas de envio)');
+      return;
+    }
     throw new Error(error.message);
   }
 
